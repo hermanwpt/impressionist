@@ -21,6 +21,34 @@ enum
 	NUM_BRUSH_TYPE // Make sure this stays at the end!
 };
 
+// Each stroke type has an associated constant
+enum {
+	STROKE_SLIDER = 0,
+	STROKE_GRADIENT,
+	STROKE_BRUSH_DIRECTION,
+	NUM_STROKE_DIRECTION_TYPE // Make sure this stays at the end!
+};
+
+// Each paintly style has an associated constant
+enum {
+	STYLE_IMPRESSIONIST = 0,
+	STYLE_EXPRESSIONIST,
+	STYLE_COLOR_WASH,
+	STYLE_POINTILLIST,
+	STYLE_CUSTOMIZE,
+	NUM_PAINTLY_STYLE
+};
+
+// Each paintly stroke type has an associated constant
+enum {
+	STROKE_CURVE_BRUSH = 0,
+	STROKE_BSPLINE_BRUSH,
+	STROKE_CIRCLE_BRUSH,
+	STROKE_CLIP_LINE_BRUSH,
+	STROKE_LINE_BRUSH,
+	NUM_PAINTLY_STROKE_TYPE
+};
+
 
 class ImpressionistDoc; // Pre-declaring class
 

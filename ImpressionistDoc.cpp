@@ -26,6 +26,9 @@ ImpressionistDoc::ImpressionistDoc()
 	m_nWidth		= -1;
 	m_ucBitmap		= NULL;
 	m_ucPainting	= NULL;
+	m_ucOrig		= NULL;
+	m_ucEdge		= NULL;
+	m_ucAnother		= NULL;
 
 
 	// create one instance of each brush
@@ -78,6 +81,33 @@ void ImpressionistDoc::setBrushType(int type)
 }
 
 //---------------------------------------------------------
+//	Called by the UI when the user changes the stroke
+//	direction type.
+//	type: one of the defined stroke direction types.
+//---------------------------------------------------------
+void ImpressionistDoc::setStrokeDirectionType(int type) {
+	//	TODO
+}
+
+//---------------------------------------------------------
+//	Called by the UI when the user changes the paintly
+//	style.
+//	type: one of the defined paintly styles.
+//---------------------------------------------------------
+void ImpressionistDoc::setPaintlyStyle(int type) {
+	//	TODO
+}
+
+//---------------------------------------------------------
+//	Called by the UI when the user changes the paintly
+//	stroke type.
+//	type: one of the defined paintly stroke types.
+//---------------------------------------------------------
+void ImpressionistDoc::setPaintlyStrokeType(int type) {
+	//	TODO
+}
+
+//---------------------------------------------------------
 // Returns the size of the brush.
 //---------------------------------------------------------
 int ImpressionistDoc::getSize()
@@ -94,6 +124,7 @@ int ImpressionistDoc::loadImage(char *iname)
 {
 	// try to open the image to read
 	unsigned char*	data;
+	unsigned char*	another_data;
 	int				width, 
 					height;
 
@@ -102,6 +133,7 @@ int ImpressionistDoc::loadImage(char *iname)
 		fl_alert("Can't load bitmap file");
 		return 0;
 	}
+	another_data=readBMP(iname, width, height);
 
 	// reflect the fact of loading the new image
 	m_nWidth		= width;
@@ -110,10 +142,15 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_nPaintHeight	= height;
 
 	// release old storage
-	if ( m_ucBitmap ) delete [] m_ucBitmap;
 	if ( m_ucPainting ) delete [] m_ucPainting;
+	if ( m_ucOrig ) delete[] m_ucOrig;
+	if ( m_ucEdge ) delete [] m_ucEdge;
+	if ( m_ucAnother ) delete [] m_ucAnother;
 
-	m_ucBitmap		= data;
+	m_ucOrig		= data;
+	m_ucEdge		= NULL;	//	TODO: Replace with a function that generates an edge image of data
+	m_ucAnother		= another_data;
+	m_ucBitmap		= m_ucOrig;
 
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
@@ -136,6 +173,40 @@ int ImpressionistDoc::loadImage(char *iname)
 	return 1;
 }
 
+//---------------------------------------------------------
+//	Load the edge/another image
+//	This is called by the UI when the load edge/another
+//	image button is pressed.
+//		mode = false:	Loads edge image
+//		mode = true:	Loads another image
+//---------------------------------------------------------
+int ImpressionistDoc::loadOtherImage(char *iname, bool mode) {
+	//	Try to open the image to read
+	unsigned char* data;
+	int	width, height;
+
+	if ((data=readBMP(iname, width, height)) == NULL) {
+		fl_alert("Can't load bitmap file");
+		return 0;
+
+	//	Images other than the original must have matching
+	//	dimensions with the original image
+	} else if ((width != m_nWidth) || (height != m_nHeight)) {
+		fl_alert("Different dimension!");
+		return 0;
+	}
+
+	//	Release old storage and assign new image to variables
+	if (mode) {
+		if (m_ucAnother) delete[] m_ucAnother;
+		m_ucAnother = data;
+	} else {
+		if (m_ucEdge) delete[] m_ucEdge;
+		m_ucEdge = data;
+	}
+
+	return 1;
+}
 
 //----------------------------------------------------------------
 // Save the specified image

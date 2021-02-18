@@ -19,15 +19,19 @@ public:
 
 	void	setUI(ImpressionistUI* ui);		// Assign the UI to use
 
-	int		loadImage(char *iname);			// called by the UI to load image
-	int		saveImage(char *iname);			// called by the UI to save image
+	int		loadImage(char *iname);						// called by the UI to load image
+	int		loadOtherImage(char* iname, bool mode);		// called by the UI to load edge/another image
+	int		saveImage(char *iname);						// called by the UI to save image
 
 
-	int     clearCanvas();                  // called by the UI to clear the drawing canvas
-	void	setBrushType(int type);			// called by the UI to set the brushType
-	int		getSize();						// get the UI size
-	void	setSize(int size);				// set the UI size
-	char*	getImageName();					// get the current image name
+	int     clearCanvas();						// called by the UI to clear the drawing canvas
+	void	setBrushType(int type);				// called by the UI to set the brushType
+	void	setStrokeDirectionType(int type);	// called by the UI to set the strokeDirectionType
+	void	setPaintlyStyle(int type);			// called by the UI to set the paintlyStyleType
+	void	setPaintlyStrokeType(int type);		// called by the UI to set the paintlyStrokeType
+	int		getSize();							// get the UI size
+	void	setSize(int size);					// set the UI size
+	char*	getImageName();						// get the current image name
 	
 
 // Attributes
@@ -38,9 +42,12 @@ public:
 	// Dimensions of the paint window.
 	int				m_nPaintWidth, 
 					m_nPaintHeight;	
-	// Bitmaps for original image and painting.
+	// Bitmaps for original image (and copies of original, edge and another) and painting.
 	unsigned char*	m_ucBitmap;
 	unsigned char*	m_ucPainting;
+	unsigned char*	m_ucOrig;
+	unsigned char*	m_ucEdge;
+	unsigned char*	m_ucAnother;
 
 
 	// The current active brush.
