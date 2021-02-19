@@ -30,6 +30,9 @@ public:
 	void	setPaintlyStyle(int type);			// called by the UI to set the paintlyStyleType
 	void	setPaintlyStrokeType(int type);		// called by the UI to set the paintlyStrokeType
 	int		getSize();							// get the UI size
+	int		getWidth();
+	int		getAngle();
+	double	getAlpha();
 	void	setSize(int size);					// set the UI size
 	char*	getImageName();						// get the current image name
 	

@@ -40,15 +40,22 @@ char* ImpBrush::BrushName(void)
 // which is the coord at the original window to sample 
 // the color from
 //----------------------------------------------------
-void ImpBrush::SetColor (const Point source)
-{
+void ImpBrush::SetColor (const Point source) {
 	ImpressionistDoc* pDoc = GetDocument();
 
 
 	GLubyte color[3];
+	double alpha = pDoc->getAlpha();
 
 	memcpy ( color, pDoc->GetOriginalPixel( source ), 3 );
  
-	glColor3ubv( color );
+	glColor4f(
+		(float)color[0] / 255.0f,
+		(float)color[1] / 255.0f,
+		(float)color[2] / 255.0f,
+		(float)alpha
+	);
+
+	printf("%s\n", glIsEnabled(GL_BLEND) == GL_TRUE ? "enabled" : "disabled");
 
 }

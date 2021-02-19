@@ -820,6 +820,30 @@ int ImpressionistUI::getSize()
 	return m_nSize;
 }
 
+//------------------------------------------------
+// Return the LINE brush width
+//------------------------------------------------
+int ImpressionistUI::getWidth()
+{
+	return m_lWidth;
+}
+
+//------------------------------------------------
+// Return the LINE brush angle
+//------------------------------------------------
+int ImpressionistUI::getAngle()
+{
+	return m_lAngle;
+}
+
+//------------------------------------------------
+// Return the brush alpha value
+//------------------------------------------------
+double ImpressionistUI::getAlpha()
+{
+	return m_nAlpha;
+}
+
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------

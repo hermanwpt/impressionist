@@ -88,6 +88,9 @@ public:
 	// Interface to get attribute
 
 	int					getSize();
+	int					getWidth();
+	int					getAngle();
+	double					getAlpha();
 	void				setSize(int size);
 
 private:

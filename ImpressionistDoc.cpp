@@ -14,12 +14,22 @@
 
 // Include individual brush headers here.
 #include "PointBrush.h"
+#include "LineBrush.h"
+#include "CircleBrush.h"
+#include "ScatteredPointBrush.h"
+#include "ScatteredLineBrush.h"
+#include "ScatteredCircleBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
 
 ImpressionistDoc::ImpressionistDoc() 
 {
+	// Enable alpha blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	printf("%s\n", glIsEnabled(GL_BLEND) == GL_TRUE ? "enabled" : "disabled");
+
 	// Set NULL image name as init. 
 	m_imageName[0]	='\0';	
 
@@ -39,15 +49,15 @@ ImpressionistDoc::ImpressionistDoc()
 
 	// Note: You should implement these 5 brushes.  They are set the same (PointBrush) for now
 	ImpBrush::c_pBrushes[BRUSH_LINES]				
-		= new PointBrush( this, "Lines" );
+		= new LineBrush( this, "Lines" );
 	ImpBrush::c_pBrushes[BRUSH_CIRCLES]				
-		= new PointBrush( this, "Circles" );
+		= new CircleBrush( this, "Circles" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_POINTS]	
-		= new PointBrush( this, "Scattered Points" );
+		= new ScatteredPointBrush( this, "Scattered Points" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES]		
-		= new PointBrush( this, "Scattered Lines" );
+		= new ScatteredLineBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
-		= new PointBrush( this, "Scattered Circles" );
+		= new ScatteredCircleBrush( this, "Scattered Circles" );
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -113,6 +123,30 @@ void ImpressionistDoc::setPaintlyStrokeType(int type) {
 int ImpressionistDoc::getSize()
 {
 	return m_pUI->getSize();
+}
+
+//---------------------------------------------------------
+// Returns the width of the LINE brush.
+//---------------------------------------------------------
+int ImpressionistDoc::getWidth()
+{
+	return m_pUI->getWidth();
+}
+
+//---------------------------------------------------------
+// Returns the angle of the LINE brush.
+//---------------------------------------------------------
+int ImpressionistDoc::getAngle()
+{
+	return m_pUI->getAngle();
+}
+
+//---------------------------------------------------------
+// Returns the alpha value of the brush.
+//---------------------------------------------------------
+double ImpressionistDoc::getAlpha()
+{
+	return m_pUI->getAlpha();
 }
 
 //---------------------------------------------------------

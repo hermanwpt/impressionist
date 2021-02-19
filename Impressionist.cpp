@@ -22,6 +22,7 @@ ImpressionistDoc *impDoc;
 int main(int	argc, 
 		 char**	argv) 
 {
+
 	impDoc = new ImpressionistDoc();
 
 	// Create the UI
