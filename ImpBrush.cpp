@@ -55,7 +55,4 @@ void ImpBrush::SetColor (const Point source) {
 		(float)color[2] / 255.0f,
 		(float)alpha
 	);
-
-	printf("%s\n", glIsEnabled(GL_BLEND) == GL_TRUE ? "enabled" : "disabled");
-
 }

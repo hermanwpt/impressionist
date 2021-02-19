@@ -25,11 +25,6 @@
 
 ImpressionistDoc::ImpressionistDoc() 
 {
-	// Enable alpha blending
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	printf("%s\n", glIsEnabled(GL_BLEND) == GL_TRUE ? "enabled" : "disabled");
-
 	// Set NULL image name as init. 
 	m_imageName[0]	='\0';	
 

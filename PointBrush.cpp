@@ -5,6 +5,7 @@
 // will look like the file with the different GL primitive calls.
 //
 
+#include "Impressionist.h"
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
 #include "pointbrush.h"
