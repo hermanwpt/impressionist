@@ -70,6 +70,8 @@ public:
 	unsigned char*	m_ucAnother;
 	unsigned char*  m_ucLastPaint;
 
+	intPair**		g_ucOrig;
+
 	// The current active brush.
 	ImpBrush*			m_pCurrentBrush;
 	int					m_pCurrentBrushType;
