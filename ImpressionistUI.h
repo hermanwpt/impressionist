@@ -90,7 +90,8 @@ public:
 	int					getSize();
 	int					getWidth();
 	int					getAngle();
-	double					getAlpha();
+	int					getThreshold();
+	double				getAlpha();
 	void				setSize(int size);
 
 private:

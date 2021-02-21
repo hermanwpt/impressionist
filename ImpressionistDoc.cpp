@@ -36,6 +36,10 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucAnother		= NULL;
 	m_ucLastPaint	= NULL;
 
+	g_ucOrig		= NULL;
+
+	m_lDirType =	STROKE_SLIDER;
+
 
 	// create one instance of each brush
 	ImpBrush::c_nBrushCount	= NUM_BRUSH_TYPE;
@@ -93,6 +97,7 @@ void ImpressionistDoc::setBrushType(int type)
 //---------------------------------------------------------
 void ImpressionistDoc::setStrokeDirectionType(int type) {
 	//	TODO
+	m_lDirType = type;
 }
 
 //---------------------------------------------------------
@@ -138,6 +143,21 @@ int ImpressionistDoc::getAngle()
 }
 
 //---------------------------------------------------------
+// Returns the threshold for EDGE detection.
+//---------------------------------------------------------
+int ImpressionistDoc::getThreshold() {
+	return m_pUI->getThreshold();
+}
+
+//---------------------------------------------------------
+// Returns the stroke direction type for LINE brush.
+//---------------------------------------------------------
+int ImpressionistDoc::getStrokeDirectionType()
+{
+	return m_lDirType;
+}
+
+//---------------------------------------------------------
 // Returns the alpha value of the brush.
 //---------------------------------------------------------
 double ImpressionistDoc::getAlpha()
@@ -179,10 +199,11 @@ int ImpressionistDoc::loadImage(char *iname)
 	if (m_ucLastPaint) delete[] m_ucLastPaint;
 
 	m_ucOrig		= data;
-	m_ucEdge		= NULL;	//	TODO: Replace with a function that generates an edge image of data
-	m_ucAnother		= another_data;
 	m_ucBitmap		= m_ucOrig;
-
+	g_ucOrig		= getGradient();
+	m_ucEdge		= getEdge(g_ucOrig);	//	TODO: Replace with a function that generates an edge image of data
+	m_ucAnother		= another_data;
+	
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
 	m_ucLastPaint	= new unsigned char[width * height * 3];
@@ -318,5 +339,148 @@ GLubyte* ImpressionistDoc::GetOriginalPixel( int x, int y )
 GLubyte* ImpressionistDoc::GetOriginalPixel( const Point p )
 {
 	return GetOriginalPixel( p.x, p.y );
+}
+
+int comparator(const void* a, const void* b) {
+	return *(GLubyte*)a = *(GLubyte*)b;
+}
+
+//----------------------------------------------------------------
+//	Generate the gradient array of the one currently pointed to
+//	by m_ucBitmap
+//----------------------------------------------------------------
+intPair** ImpressionistDoc::getGradient() {
+	// Convert image to greyscalae
+	GLubyte** greyscale = new GLubyte*[m_nWidth];
+	for (int i = 0; i < m_nWidth; ++i) {
+		greyscale[i] = new GLubyte[m_nHeight];
+	}
+
+	for (int i = 0; i < m_nWidth; ++i) {
+		for (int j = 0; j < m_nHeight; ++j) {
+			GLubyte color[3];
+			memcpy(color, GetOriginalPixel(i, j), 3);
+
+			greyscale[i][j] = color[0]; // (GLubyte)(0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2]);	// From tutorial notes
+		}
+	}
+
+	// Denoise the image with median filter;
+	GLubyte** denoisedImage = new GLubyte * [m_nWidth];
+	for (int i = 0; i < m_nWidth; ++i) {
+		denoisedImage[i] = new GLubyte[m_nHeight];
+	}
+
+	for (int i = 1; i < m_nWidth - 1; ++i) {
+		for (int j = 1; j < m_nHeight - 1; ++j) {
+			GLubyte pixels[9];
+			for (int u = 0; u <= 2; ++u) {
+				for (int v = 0; v <= 2; ++v) {
+					pixels[u * 3 + v] = greyscale[i + u - 1][j + v - 1];
+				}
+			}
+			qsort(pixels, 9, sizeof(GLubyte), comparator);
+			denoisedImage[i][j] = pixels[4];
+		}
+	}
+
+	// Pad the denoised image with new border pixels
+	for (int i = 1; i < m_nWidth - 1; ++i) {
+		denoisedImage[i][0] = denoisedImage[i][1];
+		denoisedImage[i][m_nHeight - 1] = denoisedImage[i][m_nHeight - 2];
+	}
+
+	for (int i = 0; i < m_nHeight; ++i) {
+		denoisedImage[0][i] = denoisedImage[1][i];
+		denoisedImage[m_nWidth - 1][i] = denoisedImage[m_nWidth - 2][i];
+	}
+
+	// Calculate gradient using sobel operators
+	int offset = 0;
+
+	intPair** gradient = new intPair* [m_nWidth];
+	for (int i = 0; i < m_nWidth; ++i) {
+		gradient[i] = new intPair[m_nHeight];
+	}
+
+	for (int i = 1; i < m_nWidth - 1; ++i) {
+		for (int j = 1; j < m_nHeight - 1; ++j) {
+			GLubyte pixels[9];
+			for (int u = 0; u <= 2; ++u) {
+				for (int v = 0; v <= 2; ++v) {
+					pixels[u * 3 + v] = denoisedImage[i + u - 1][j + v - 1];
+				}
+			}
+			int xGradient = (int)min((
+					-1 * pixels[0] +	 0 * pixels[3] +	 1 * pixels[6]
+				+	-2 * pixels[1] +	 0 * pixels[4] +	 2 * pixels[7]
+				+	-1 * pixels[2] +	 0 * pixels[5] +	 1 * pixels[8]
+				+ offset
+			), 32768);
+			int yGradient = (int)min((
+					 1 * pixels[0] +	 2 * pixels[3] +	 1 * pixels[6]
+				+	 0 * pixels[1] +	 0 * pixels[4] +	 0 * pixels[7]
+				+	-1 * pixels[2] +	-2 * pixels[5] +	-1 * pixels[8]
+				+ offset
+			), 32768);
+			gradient[i][j] = intPair(xGradient, yGradient);
+			// printf("Gradient at (%d, %d) = (%d, %d)\n", i, j, xGradient, yGradient);
+		}
+	}
+
+	// Pad the denoised image with new border pixels
+	for (int i = 1; i < m_nWidth - 1; ++i) {
+		gradient[i][0] = intPair(gradient[i][1].a, gradient[i][1].b);
+		gradient[i][m_nHeight - 1] = intPair(gradient[i][m_nHeight - 2].a, gradient[i][m_nHeight - 2].b);
+	}
+
+	for (int i = 0; i < m_nHeight; ++i) {
+		gradient[0][i] = intPair(gradient[1][i].a, gradient[1][i].b);
+		gradient[m_nWidth - 1][i] = intPair(gradient[m_nWidth - 2][i].a, gradient[m_nWidth - 2][i].b);
+	}
+
+	// Release old storage
+	for (int i = 0; i < m_nWidth; ++i) {
+		delete [] greyscale[i];
+	}
+	delete [] greyscale;
+
+	for (int i = 0; i < m_nWidth; ++i) {
+		delete[] denoisedImage[i];
+	}
+	delete[] denoisedImage;
+
+	return gradient;
+}
+
+//----------------------------------------------------------------
+//	Generate the edge image of the one currently pointed to by
+//	m_ucBitmap
+//----------------------------------------------------------------
+unsigned char* ImpressionistDoc::getEdge(intPair** gradient) {
+	int numBytes = m_nWidth * m_nHeight * 3;
+	unsigned char* edgeImage = new unsigned char[numBytes];
+	memset(edgeImage, 0, numBytes);
+
+	int threshold = sqrt(1020 * 1020 * 2) * getThreshold() / 1000;
+
+	for (int i = 0; i < m_nWidth; ++i) {
+		for (int j = 0; j < m_nHeight; ++j) {
+			int intensity = (int)(sqrt(gradient[i][j].a * gradient[i][j].a + gradient[i][j].b * gradient[i][j].b));
+			// printf("intensify at (%d, %d) = %d\n", i, j, intensity);
+			if (intensity < threshold) {
+				edgeImage[(i + j * m_nWidth) * 3] = 0;
+				edgeImage[(i + j * m_nWidth) * 3 + 1] = 0;
+				edgeImage[(i + j * m_nWidth) * 3 + 2] = 0;
+			} else {
+				edgeImage[(i + j * m_nWidth) * 3] = 255;
+				edgeImage[(i + j * m_nWidth) * 3 + 1] = 255;
+				edgeImage[(i + j * m_nWidth) * 3 + 2] = 255;
+			}
+			
+		}
+	}
+
+	return edgeImage;
 }
 

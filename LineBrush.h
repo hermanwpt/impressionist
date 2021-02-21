@@ -23,6 +23,7 @@ private:
 	static const int NUM_SEGMENTS = 360;
 	double sinValues[NUM_SEGMENTS];
 	double cosValues[NUM_SEGMENTS];
+	Point prevloc;
 };
 
 #endif

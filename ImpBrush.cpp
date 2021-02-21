@@ -17,6 +17,7 @@ ImpBrush::ImpBrush(ImpressionistDoc*	pDoc,
 					m_pDoc(pDoc), 
 					m_pBrushName(name)
 {
+
 }
 
 //---------------------------------------------------
