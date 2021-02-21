@@ -156,6 +156,7 @@ private:
 	static void	cb_brushes(Fl_Menu_* o, void* v);
 	static void cb_colors(Fl_Menu_* o, void* v);
 	static void cb_paintly(Fl_Menu_* o, void* v);
+	static void cb_undo(Fl_Menu_* o, void* v);
 	static void	cb_clear_canvas(Fl_Menu_* o, void* v);
 	static void	cb_exit(Fl_Menu_* o, void* v);
 	static void cb_original_image(Fl_Menu_* o, void* v);
