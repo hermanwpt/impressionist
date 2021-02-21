@@ -51,17 +51,19 @@ void PaintView::draw()
 	glDrawBuffer(GL_FRONT_AND_BACK);
 	#endif // !MESA
 
+	// Enable border clipping
+	glEnable(GL_SCISSOR_TEST);
+
+	// Enable alpha blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	if(!valid())
 	{
-
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0);
 
 		// We're only using 2-D, so turn off depth 
 		glDisable( GL_DEPTH_TEST );
-
-		// Enable alpha blending
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		ortho();
 
@@ -78,6 +80,9 @@ void PaintView::draw()
 	int drawWidth, drawHeight;
 	drawWidth = min( m_nWindowWidth, m_pDoc->m_nPaintWidth );
 	drawHeight = min( m_nWindowHeight, m_pDoc->m_nPaintHeight );
+
+	// Specify border to clip
+	glScissor(0, m_nWindowHeight - drawHeight, drawWidth, drawHeight);
 
 	int startrow = m_pDoc->m_nPaintHeight - (scrollpos.y + drawHeight);
 	if ( startrow < 0 ) startrow = 0;
