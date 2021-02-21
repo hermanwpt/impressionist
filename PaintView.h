@@ -42,6 +42,12 @@ private:
 			m_nEndCol,
 			m_nWindowWidth, 
 			m_nWindowHeight;
+			
+	// For specifiying LINE brush angle & length
+	int		m_lStartX;
+	int		m_lStartY;
+	int		m_lEndX;
+	int		m_lEndY;
 
 };
 

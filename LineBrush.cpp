@@ -46,7 +46,7 @@ void LineBrush::BrushMove(const Point source, const Point target) {
 	glBegin(GL_LINES);
 	SetColor(source);
 
-	int angle;
+	int angle, x, y;
 	double temp;
 	intPair** gradient = pDoc->g_ucOrig;
 	switch (pDoc->getStrokeDirectionType()) {
@@ -54,9 +54,24 @@ void LineBrush::BrushMove(const Point source, const Point target) {
 		angle = pDoc->getAngle();
 		break;
 	case STROKE_GRADIENT:
-		if (gradient[source.x][source.y].a != 0) {
-			temp = atan((gradient[source.x][source.y]).b / (gradient[source.x][source.y]).a);
-		}else {
+		// Prevent coordinates from going out of bound
+		x = source.x;
+		y = source.y;
+		if (x < 0) {
+			x = 0;
+		} else if (x > pDoc->m_nWidth - 1) {
+			x = pDoc->m_nWidth - 1;
+		}
+
+		if (y < 0) {
+			y = 0;
+		} else if (y > pDoc->m_nHeight - 1) {
+			y = pDoc->m_nHeight - 1;
+		}
+
+		if (gradient[x][y].a != 0) {
+			temp = atan2((gradient[x][y]).b, (gradient[x][y]).a); // Use atan2 instead for real-time operations
+		} else {
 			temp = M_PI / 2;
 		}
 
@@ -69,7 +84,7 @@ void LineBrush::BrushMove(const Point source, const Point target) {
 	case STROKE_BRUSH_DIRECTION:
 		printf("Source: (%d, %d)\t\tPrevloc: (%d, %d)\n", source.x, source.y, prevloc.x, prevloc.y);
 		if (prevloc.x - source.x != 0) {
-			temp = atan((source.y - prevloc.y) / (source.x - prevloc.x));
+			temp = atan2((source.y - prevloc.y), (source.x - prevloc.x)); // Use atan2 instead for real-time operations
 		} else {
 			temp = M_PI / 2;
 		}
@@ -100,5 +115,13 @@ void LineBrush::BrushMove(const Point source, const Point target) {
 void LineBrush::BrushEnd(const Point source, const Point target)
 {
 	// do nothing so far
+}
+
+void LineBrush::drawCursor(const Point source, const Point target) {
+	glBegin(GL_LINES);
+	glColor4f(1.00, 0.00, 0.00, 1.00);
+		glVertex2d(source.x, source.y);
+		glVertex2d(target.x, target.y);
+	glEnd();
 }
 

@@ -860,6 +860,16 @@ double ImpressionistUI::getAlpha()
 	return m_nAlpha;
 }
 
+//------------------------------------------------
+//	Set LINE brush'as angle;
+//------------------------------------------------
+void ImpressionistUI::setAngle(int angle) {
+	m_lAngle = angle;
+
+	if ((angle >= 0) && (angle <= 359))
+		m_LineAngleSlider->value(m_lAngle);
+}
+
 //-------------------------------------------------
 // Set the brush size
 //-------------------------------------------------

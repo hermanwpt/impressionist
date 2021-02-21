@@ -27,14 +27,27 @@ public:
 	
 	void draw();
 	void refresh();
+	void drawCursor(Point source);
+	// int handle(int event);
 
 	void resizeWindow(int width, int height);
+	void SaveCurrentContent();
+	void RestoreContent();
 
 	ImpressionistDoc*	m_pDoc;
 
 private:
-	int	m_nWindowWidth, 
-		m_nWindowHeight;
+	GLvoid* m_pOrigBitstart;
+	Point cursorPos;
+	int	m_nWindowWidth;
+	int m_nWindowHeight;
+	int m_nDrawWidth;
+	int m_nDrawHeight;
+	int m_nStartRow;
+	int m_nStartCol;
+	int m_nEndRow;
+	int m_nEndCol;
+	
 
 };
 

@@ -72,6 +72,7 @@ public:
 	virtual void BrushBegin( const Point source, const Point target ) = 0;
 	virtual void BrushMove( const Point source, const Point target ) = 0;
 	virtual void BrushEnd( const Point source, const Point target ) = 0;
+	void drawCursor(const Point source);
 
 	// according to the source image and the position, determine the draw color
 	void SetColor( const Point source );

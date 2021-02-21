@@ -4,11 +4,14 @@
 // The code maintaining the painting view of the input images
 //
 
+
 #include "impressionist.h"
 #include "impressionistDoc.h"
 #include "impressionistUI.h"
 #include "paintview.h"
 #include "ImpBrush.h"
+#include "LineBrush.h"
+#include <math.h>
 
 
 #define LEFT_MOUSE_DOWN		1
@@ -121,14 +124,52 @@ void PaintView::draw()
 			SaveCurrentContent();
 			RestoreContent();
 			break;
-		case RIGHT_MOUSE_DOWN:
 
+		// Only valid when using LINE brush and using slider/right-click to control the direction
+		case RIGHT_MOUSE_DOWN:
+			// Save current coordinates to calculate new size/angle later
+			if ((m_pDoc->getBrushType() == BRUSH_LINES) || (m_pDoc->getBrushType() == BRUSH_SCATTERED_LINES)) {
+				m_lStartX = source.x;
+				m_lStartY = source.y;
+			}
 			break;
 		case RIGHT_MOUSE_DRAG:
+			RestoreContent();
+			// Draw "cursor"
+			
+			((LineBrush*)m_pDoc->m_pCurrentBrush)->drawCursor(Point(m_lStartX, m_lStartY), source);
 
 			break;
 		case RIGHT_MOUSE_UP:
+			// Calculate new size/angles
+			if ((m_pDoc->getBrushType() == BRUSH_LINES) || (m_pDoc->getBrushType() == BRUSH_SCATTERED_LINES)) {
+				m_lEndX = source.x;
+				m_lEndY = source.y;
 
+				double temp;
+				if (m_lEndX - m_lStartX != 0) {
+					temp = atan2((m_lEndY - m_lStartY), (m_lEndX - m_lStartX));	// Use atan2 instead for real-time operations
+				}
+				else {
+					temp = M_PI / 2;
+				}
+
+				int size = m_pDoc->getSize();
+				int angle;
+
+				size = sqrt((m_lEndY - m_lStartY) * (m_lEndY - m_lStartY) + (m_lEndX - m_lStartX) * (m_lEndX - m_lStartX));
+
+				if (temp < 0) {
+					angle = ((2 * M_PI + temp) / (2 * M_PI) * 360);
+				} else {
+					angle = (temp / (2 * M_PI) * 360);
+				}
+
+				m_pDoc->m_pUI->setSize(size);
+				m_pDoc->m_pUI->setAngle(angle);
+			}
+
+			RestoreContent();
 			break;
 
 		default:
@@ -173,6 +214,9 @@ int PaintView::handle(int event)
 			eventToDo=LEFT_MOUSE_DRAG;
 		isAnEvent=1;
 		redraw();
+
+		// Invoke OriginalView to draw cursor
+		m_pDoc->m_pUI->m_origView->drawCursor(Point(coord.x + m_nStartCol, m_nEndRow - coord.y));
 		break;
 	case FL_RELEASE:
 		coord.x = Fl::event_x();
@@ -187,6 +231,9 @@ int PaintView::handle(int event)
 	case FL_MOVE:
 		coord.x = Fl::event_x();
 		coord.y = Fl::event_y();
+
+		// Invoke OriginalView to draw cursor
+		m_pDoc->m_pUI->m_origView->drawCursor(Point(coord.x + m_nStartCol, m_nEndRow - coord.y));
 		break;
 	default:
 		return 0;

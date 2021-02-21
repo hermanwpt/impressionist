@@ -7,6 +7,7 @@
 #include "impressionist.h"
 #include "impressionistDoc.h"
 #include "originalview.h"
+#include "LineBrush.h"
 
 #ifndef WIN32
 #define min(a, b)	( ( (a)<(b) ) ? (a) : (b) )
@@ -51,32 +52,34 @@ void OriginalView::draw()
 		m_nWindowWidth=w();
 		m_nWindowHeight=h();
 
-		int drawWidth, drawHeight;
-		GLvoid* bitstart;
-
 		// we are not using a scrollable window, so ignore it
 		Point scrollpos;	// = GetScrollPosition();
 		scrollpos.x=scrollpos.y=0;
 
-		drawWidth	= min( m_nWindowWidth, m_pDoc->m_nWidth );
-		drawHeight	= min( m_nWindowHeight, m_pDoc->m_nHeight );
+		m_nDrawWidth = min( m_nWindowWidth, m_pDoc->m_nPaintWidth );
+		m_nDrawHeight = min( m_nWindowHeight, m_pDoc->m_nPaintHeight );
 
-		int	startrow	= m_pDoc->m_nHeight - (scrollpos.y + drawHeight);
+		int	startrow	= m_pDoc->m_nHeight - (scrollpos.y + m_nDrawHeight);
 		if ( startrow < 0 ) 
 			startrow = 0;
 
+		m_nStartRow = startrow;
+		m_nEndRow = startrow + m_nDrawHeight;
+		m_nStartCol = scrollpos.x;
+		m_nEndCol = m_nStartCol + m_nDrawWidth;
 
-		bitstart = m_pDoc->m_ucBitmap + 3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
+		m_pOrigBitstart = m_pDoc->m_ucBitmap + 3 * ((m_pDoc->m_nWidth * startrow) + scrollpos.x);
 
 		// just copy image to GLwindow conceptually
-		glRasterPos2i( 0, m_nWindowHeight - drawHeight );
+		glRasterPos2i( 0, m_nWindowHeight - m_nDrawHeight);
 		glPixelStorei( GL_UNPACK_ALIGNMENT, 1 );
 		glPixelStorei( GL_UNPACK_ROW_LENGTH, m_pDoc->m_nWidth );
 		glDrawBuffer( GL_BACK );
-		glDrawPixels( drawWidth, drawHeight, GL_RGB, GL_UNSIGNED_BYTE, bitstart );
+		glDrawPixels(m_nDrawWidth, m_nDrawHeight, GL_RGB, GL_UNSIGNED_BYTE, m_pOrigBitstart);
 
+		((ImpBrush*)m_pDoc->m_pCurrentBrush)->drawCursor(cursorPos);
 	}
-			
+
 	glFlush();
 }
 
@@ -85,9 +88,67 @@ void OriginalView::refresh()
 	redraw();
 }
 
+void OriginalView::drawCursor(Point source) {
+	cursorPos = Point(source.x + m_nStartCol, m_nWindowHeight - (m_nEndRow - source.y));
+	refresh();
+}
+/*
+int OriginalView::handle(int event) {
+	switch (event)
+	{
+	case FL_ENTER:
+		redraw();
+		break;
+	case FL_MOVE:
+		redraw();
+		break;
+	default:
+		return 0;
+		break;
+
+	}
+	return 1;
+}
+*/
 void OriginalView::resizeWindow(int	width, 
 								int	height)
 {
 	resize(x(), y(), width, height);
 }
 
+void OriginalView::SaveCurrentContent()
+{
+	// Tell openGL to read from the front buffer when capturing
+	// out paint strokes
+	glReadBuffer(GL_FRONT);
+
+	glPixelStorei(GL_PACK_ALIGNMENT, 1);
+	glPixelStorei(GL_PACK_ROW_LENGTH, m_pDoc->m_nPaintWidth);
+
+	glReadPixels(0,
+		m_nWindowHeight - m_nDrawHeight,
+		m_nDrawWidth,
+		m_nDrawHeight,
+		GL_RGB,
+		GL_UNSIGNED_BYTE,
+		m_pOrigBitstart);
+}
+
+
+void OriginalView::RestoreContent()
+{
+	glDrawBuffer(GL_BACK);
+
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	glRasterPos2i(0, m_nWindowHeight - m_nDrawHeight);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+	glPixelStorei(GL_UNPACK_ROW_LENGTH, m_pDoc->m_nPaintWidth);
+	glDrawPixels(m_nDrawWidth,
+		m_nDrawHeight,
+		GL_RGB,
+		GL_UNSIGNED_BYTE,
+		m_pOrigBitstart);
+
+	//	glDrawBuffer(GL_FRONT);
+}

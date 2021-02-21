@@ -38,6 +38,7 @@ ImpressionistDoc::ImpressionistDoc()
 
 	g_ucOrig		= NULL;
 
+	m_pCurrentBrushType = BRUSH_POINTS;
 	m_lDirType =	STROKE_SLIDER;
 
 
@@ -88,6 +89,7 @@ char* ImpressionistDoc::getImageName()
 void ImpressionistDoc::setBrushType(int type)
 {
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[type];
+	m_pCurrentBrushType = type;
 }
 
 //---------------------------------------------------------
@@ -155,6 +157,14 @@ int ImpressionistDoc::getThreshold() {
 int ImpressionistDoc::getStrokeDirectionType()
 {
 	return m_lDirType;
+}
+
+//---------------------------------------------------------
+// Returns the brush type as INT;
+//---------------------------------------------------------
+int ImpressionistDoc::getBrushType()
+{
+	return m_pCurrentBrushType;
 }
 
 //---------------------------------------------------------

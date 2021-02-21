@@ -57,3 +57,11 @@ void ImpBrush::SetColor (const Point source) {
 		(float)alpha
 	);
 }
+
+void ImpBrush::drawCursor(const Point source) {
+	glPointSize(5);
+	glBegin(GL_POINTS);
+	glColor4f(1, 0, 0, 1);
+		glVertex2d(source.x, source.y);
+	glEnd();
+}
