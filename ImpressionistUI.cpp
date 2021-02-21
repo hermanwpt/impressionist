@@ -253,6 +253,14 @@ void ImpressionistUI::cb_paintly(Fl_Menu_* o, void* v) {
 	whoami(o)->m_paintlyDialog->show();
 }
 
+//-------------------------------------------------------------
+//	Undo last brush
+//-------------------------------------------------------------
+void ImpressionistUI::cb_undo(Fl_Menu_* o, void* v) {
+	ImpressionistDoc* pDoc = whoami(o)->getDocument();
+	pDoc->undo();
+}
+
 //------------------------------------------------------------
 // Clears the paintview canvas.
 // Called by the UI when the clear canvas menu item is chosen
@@ -865,6 +873,8 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 
 		{ "&Colors...",		FL_ALT + 'k', (Fl_Callback*)ImpressionistUI::cb_colors },
 		{ "&Paintly...",	FL_ALT + 'p', (Fl_Callback*)ImpressionistUI::cb_paintly, 0, FL_MENU_DIVIDER },
+
+		{ "&Undo",		FL_ALT + 'z', (Fl_Callback*)ImpressionistUI::cb_undo, 0, FL_MENU_DIVIDER },
 
 		{ "&Load Edge Image...",	FL_ALT + 'e', (Fl_Callback*)ImpressionistUI::cb_load_edge_image },
 		{ "&Load Another Image...",	FL_ALT + 'a', (Fl_Callback*)ImpressionistUI::cb_load_another_image, 0, FL_MENU_DIVIDER },

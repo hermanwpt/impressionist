@@ -34,6 +34,7 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucOrig		= NULL;
 	m_ucEdge		= NULL;
 	m_ucAnother		= NULL;
+	m_ucLastPaint	= NULL;
 
 
 	// create one instance of each brush
@@ -175,6 +176,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	if ( m_ucOrig ) delete[] m_ucOrig;
 	if ( m_ucEdge ) delete [] m_ucEdge;
 	if ( m_ucAnother ) delete [] m_ucAnother;
+	if (m_ucLastPaint) delete[] m_ucLastPaint;
 
 	m_ucOrig		= data;
 	m_ucEdge		= NULL;	//	TODO: Replace with a function that generates an edge image of data
@@ -183,7 +185,9 @@ int ImpressionistDoc::loadImage(char *iname)
 
 	// allocate space for draw view
 	m_ucPainting	= new unsigned char [width*height*3];
+	m_ucLastPaint	= new unsigned char[width * height * 3];
 	memset(m_ucPainting, 0, width*height*3);
+	memset(m_ucLastPaint, 0, width * height * 3);
 
 	m_pUI->m_mainWindow->resize(m_pUI->m_mainWindow->x(), 
 								m_pUI->m_mainWindow->y(), 
@@ -262,6 +266,7 @@ int ImpressionistDoc::clearCanvas()
 	if ( m_ucPainting ) 
 	{
 		delete [] m_ucPainting;
+		delete[] m_ucLastPaint;
 
 		// allocate space for draw view
 		m_ucPainting	= new unsigned char [m_nPaintWidth*m_nPaintHeight*3];
@@ -272,6 +277,21 @@ int ImpressionistDoc::clearCanvas()
 	}
 	
 	return 0;
+}
+
+//------------------------------------------------------------------
+// save the painting to m_ucLastPaint after every brush
+//------------------------------------------------------------------
+void ImpressionistDoc::saveLastPaint() {
+	memcpy(m_ucLastPaint, m_ucPainting, m_nWidth * m_nHeight * 3 * sizeof(unsigned char));
+}
+
+//------------------------------------------------------------------
+// undo the last brush
+//------------------------------------------------------------------
+void ImpressionistDoc::undo() {
+	memcpy(m_ucPainting, m_ucLastPaint, m_nWidth * m_nHeight * 3 * sizeof(unsigned char));
+	m_pUI->m_paintView->refresh();
 }
 
 //------------------------------------------------------------------

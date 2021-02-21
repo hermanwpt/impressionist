@@ -29,6 +29,9 @@ public:
 	void	setStrokeDirectionType(int type);	// called by the UI to set the strokeDirectionType
 	void	setPaintlyStyle(int type);			// called by the UI to set the paintlyStyleType
 	void	setPaintlyStrokeType(int type);		// called by the UI to set the paintlyStrokeType
+	void	undo();								// called by the UI "Undo"
+	void	saveLastPaint();					// save the painting to m_ucLastPaint after every brush
+
 	int		getSize();							// get the UI size
 	int		getWidth();
 	int		getAngle();
@@ -51,7 +54,7 @@ public:
 	unsigned char*	m_ucOrig;
 	unsigned char*	m_ucEdge;
 	unsigned char*	m_ucAnother;
-
+	unsigned char*  m_ucLastPaint;
 
 	// The current active brush.
 	ImpBrush*			m_pCurrentBrush;	
