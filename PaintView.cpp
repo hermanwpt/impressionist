@@ -51,17 +51,32 @@ void PaintView::draw()
 	glDrawBuffer(GL_FRONT_AND_BACK);
 	#endif // !MESA
 
+	// Enable border clipping
+	// glEnable(GL_SCISSOR_TEST);
+
+	// Enable edge clipping (using stencil buffer)
+	glEnable(GL_STENCIL_TEST);
+	glClearStencil(0);					// 0 means "do not display"
+	glStencilMask(0xFF);
+	glStencilFunc(GL_EQUAL, 1, 0xFF);	// 1 means "display"
+
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);	// Always draw to the stencil buffer
+	glClear(GL_STENCIL_BUFFER_BIT);						// Clear the stencil buffer, effectively making them all 0s
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	
+
+	// Enable alpha blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 	if(!valid())
 	{
-
 		glClearColor(0.7f, 0.7f, 0.7f, 1.0);
 
 		// We're only using 2-D, so turn off depth 
 		glDisable( GL_DEPTH_TEST );
-
-		// Enable alpha blending
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		ortho();
 
@@ -92,6 +107,23 @@ void PaintView::draw()
 	m_nEndRow		= startrow + drawHeight;
 	m_nStartCol		= scrollpos.x;
 	m_nEndCol		= m_nStartCol + drawWidth;
+
+	// Draw border for clipping
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);	// Always draw to the stencil buffer
+
+	glBegin(GL_POLYGON);
+	//glVertex2f(0, 0);
+	//glVertex2f(m_nDrawWidth, 0);
+	//glVertex2f(m_nDrawWidth, m_nWindowHeight - m_nDrawHeight);
+	glVertex2f(0, m_nWindowHeight - m_nDrawHeight);
+	glVertex2f(m_nDrawWidth, m_nWindowHeight - m_nDrawHeight);
+	glVertex2f(m_nDrawWidth, m_nWindowHeight);
+	glVertex2f(0, m_nWindowHeight);
+	glEnd();
+	// Clear the stencil buffer, effectively making them all 0s
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
 	if ( m_pDoc->m_ucPainting && !isAnEvent) 
 	{
@@ -276,7 +308,8 @@ void PaintView::SaveCurrentContent()
 
 
 void PaintView::RestoreContent()
-{
+{	
+	// Draw image
 	glDrawBuffer(GL_BACK);
 
 	glClear( GL_COLOR_BUFFER_BIT );
@@ -289,6 +322,8 @@ void PaintView::RestoreContent()
 				  GL_RGB, 
 				  GL_UNSIGNED_BYTE, 
 				  m_pPaintBitstart);
+
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
 
 //	glDrawBuffer(GL_FRONT);
 }
