@@ -92,6 +92,7 @@ public:
 	int					getAngle();
 	int					getThreshold();
 	double				getAlpha();
+	bool				getClip();
 	void				setSize(int size);
 	void				setAngle(int angle);
 

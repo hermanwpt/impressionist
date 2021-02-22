@@ -23,6 +23,21 @@ public:
 	};
 };
 
+class BFSVertex {
+public:
+	BFSVertex() {};
+	BFSVertex(int xx, int yy, bool d) {
+		x = xx;
+		y = yy;
+		data = d;
+		checked = false;
+	}
+	int x;
+	int y;
+	bool data;
+	bool checked;
+};
+
 class ImpressionistDoc 
 {
 public:
@@ -50,6 +65,7 @@ public:
 	int		getStrokeDirectionType();
 	int		getBrushType();
 	double	getAlpha();
+	bool	getClip();
 	void	setSize(int size);					// set the UI size
 	char*	getImageName();						// get the current image name
 	
@@ -71,6 +87,7 @@ public:
 	unsigned char*  m_ucLastPaint;
 
 	intPair**		g_ucOrig;
+	BFSVertex**		e_ucEdge;	// Stores the edge image, but in 2D array form, updates when getEdge() is called
 
 	// The current active brush.
 	ImpBrush*			m_pCurrentBrush;
@@ -90,7 +107,7 @@ public:
 	GLubyte* GetOriginalPixel( const Point p );
 	// Generate the gradient array of the one currently pointed to by m_ucBitmap
 	intPair** getGradient();
-	// Generate the edge image of the one currently pointed to by m_ucBitmap
+	// Generate the edge image of the one currently pointed to by m_ucBitmap, also updates e_ucEdge
 	unsigned char* getEdge(intPair** gradient);
 
 

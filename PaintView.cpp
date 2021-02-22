@@ -62,7 +62,9 @@ void PaintView::draw()
 
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);	// Always draw to the stencil buffer
+
 	glClear(GL_STENCIL_BUFFER_BIT);						// Clear the stencil buffer, effectively making them all 0s
+
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	
@@ -113,15 +115,12 @@ void PaintView::draw()
 	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);	// Always draw to the stencil buffer
 
 	glBegin(GL_POLYGON);
-	//glVertex2f(0, 0);
-	//glVertex2f(m_nDrawWidth, 0);
-	//glVertex2f(m_nDrawWidth, m_nWindowHeight - m_nDrawHeight);
-	glVertex2f(0, m_nWindowHeight - m_nDrawHeight);
-	glVertex2f(m_nDrawWidth, m_nWindowHeight - m_nDrawHeight);
-	glVertex2f(m_nDrawWidth, m_nWindowHeight);
-	glVertex2f(0, m_nWindowHeight);
+		glVertex2f(0, m_nWindowHeight - m_nDrawHeight);
+		glVertex2f(m_nDrawWidth, m_nWindowHeight - m_nDrawHeight);
+		glVertex2f(m_nDrawWidth, m_nWindowHeight);
+		glVertex2f(0, m_nWindowHeight);
 	glEnd();
-	// Clear the stencil buffer, effectively making them all 0s
+
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
@@ -322,8 +321,6 @@ void PaintView::RestoreContent()
 				  GL_RGB, 
 				  GL_UNSIGNED_BYTE, 
 				  m_pPaintBitstart);
-
-	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
 
 //	glDrawBuffer(GL_FRONT);
 }

@@ -546,7 +546,7 @@ void ImpressionistUI::cb_clear_canvas_button(Fl_Widget* o, void* v)
 //	Called by the UI when the edge clipping button is pushed
 //------------------------------------------------------------
 void ImpressionistUI::cb_edge_clipping_button(Fl_Widget* o, void* v) {
-	((ImpressionistUI*)(o->user_data()))->m_lClip = bool(((Fl_Slider*)o)->value());
+	((ImpressionistUI*)(o->user_data()))->m_lClip = bool(((Fl_Button*)o)->value());
 }
 
 //------------------------------------------------------------
@@ -579,7 +579,13 @@ void ImpressionistUI::cb_paint_button(Fl_Widget* o, void* v) {
 //	Called by the UI when the do it button is pushed
 //------------------------------------------------------------
 void ImpressionistUI::cb_do_it_button(Fl_Widget* o, void* v) {
-	//	TODO
+	ImpressionistUI* pUI = (ImpressionistUI*)(o->user_data());
+	ImpressionistDoc* pDoc = pUI->getDocument();
+
+	if (pDoc->m_ucEdge) delete[] pDoc->m_ucEdge;
+
+	pDoc->getEdge(pDoc->g_ucOrig);
+	pUI->m_origView->refresh();
 }
 
 //------------------------------------------------------------
@@ -858,6 +864,15 @@ int ImpressionistUI::getThreshold()
 double ImpressionistUI::getAlpha()
 {
 	return m_nAlpha;
+}
+
+//------------------------------------------------
+//	Return the LINE (or other) brush clipping
+//	option (TRUE?/FASLE)
+//------------------------------------------------
+bool ImpressionistUI::getClip()
+{
+	return m_lClip;
 }
 
 //------------------------------------------------

@@ -86,11 +86,15 @@ public:
 	static int			c_nBrushCount;	// How many brushes we have,
 	static ImpBrush**	c_pBrushes;		// and what they are.
 
+	static const int			CLIPPING_SAMPLE_SIZE = 1;
+
 private:
 	ImpressionistDoc*	m_pDoc;
 
 	// Brush's name (not used in this version).
 	char*				m_pBrushName;
+
+	
 };
 
 #endif
