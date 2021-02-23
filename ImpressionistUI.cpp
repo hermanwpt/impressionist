@@ -635,7 +635,6 @@ void ImpressionistUI::cb_filterkernelapply(Fl_Widget* o, void* v) {
 			if (!(iss >> val))
 				return;
 			x.push_back(val);
-			std::cout << val << " " << std::endl;
 		}
 		pUI->m_customizedFilterKernel.push_back(x);
 	}
