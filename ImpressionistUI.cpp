@@ -582,7 +582,7 @@ void ImpressionistUI::cb_do_it_button(Fl_Widget* o, void* v) {
 	ImpressionistUI* pUI = (ImpressionistUI*)(o->user_data());
 	ImpressionistDoc* pDoc = pUI->getDocument();
 
-	if (pDoc->m_ucEdge) delete[] pDoc->m_ucEdge;
+	// if (pDoc->m_ucEdge) delete[] pDoc->m_ucEdge;
 
 	pDoc->getEdge(pDoc->g_ucOrig);
 	pUI->m_origView->refresh();

@@ -221,7 +221,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	// release old storage
 	if (m_ucPainting) delete[] m_ucPainting; 
 	if (m_ucOrig) delete[] m_ucOrig; 
-	if (m_ucEdge) delete[] m_ucEdge; m_ucEdge = NULL;
+	if (m_ucEdge) delete[] m_ucEdge;
 	if (m_ucAnother) delete[] m_ucAnother; 
 	if (m_ucLastPaint) delete[] m_ucLastPaint;
 	e_ucEdge = NULL;
@@ -267,6 +267,8 @@ int ImpressionistDoc::loadOtherImage(char *iname, bool mode) {
 	//	Try to open the image to read
 	unsigned char* data;
 	int	width, height;
+	bool edgeFlag = false;
+	bool anotherFlag = false;
 
 	if ((data=readBMP(iname, width, height)) == NULL) {
 		fl_alert("Can't load bitmap file");
@@ -279,6 +281,15 @@ int ImpressionistDoc::loadOtherImage(char *iname, bool mode) {
 		return 0;
 	}
 
+	if (m_ucBitmap == m_ucEdge) {
+		edgeFlag = true;
+		m_ucBitmap = NULL;
+	}
+	if (m_ucBitmap == m_ucAnother) {
+		anotherFlag = true;
+		m_ucBitmap = NULL;
+	}
+
 	//	Release old storage and assign new image to variables
 	if (mode) {
 		if (m_ucAnother) delete[] m_ucAnother;
@@ -286,6 +297,29 @@ int ImpressionistDoc::loadOtherImage(char *iname, bool mode) {
 	} else {
 		if (m_ucEdge) delete[] m_ucEdge;
 		m_ucEdge = data;
+		
+		e_ucEdge = new BFSVertex * [width];
+		for (int i = 0; i < m_nWidth; ++i) {
+			e_ucEdge[i] = new BFSVertex[height];
+		}
+
+		for (int i = 0; i < m_nWidth; ++i) {
+			for (int j = 0; j < m_nHeight; ++j) {
+				int intensity = m_ucEdge[(i + j * width) * 3];
+				if (intensity == 0) {
+					e_ucEdge[i][j] = BFSVertex(i, j, false);
+				} else {
+					e_ucEdge[i][j] = BFSVertex(i, j, true);
+				}
+			}
+		}
+	}
+
+	if (edgeFlag) {
+		m_ucBitmap = m_ucEdge;
+	}
+	if (anotherFlag) {
+		m_ucBitmap = m_ucAnother;
 	}
 
 	return 1;
@@ -489,12 +523,17 @@ intPair** ImpressionistDoc::getGradient() {
 //----------------------------------------------------------------
 unsigned char* ImpressionistDoc::getEdge(intPair** gradient) {
 	// Release storage for old edge image array first
+	bool flag = false;
+	if (m_ucBitmap == m_ucEdge) {
+		flag = true;
+	}
 	if (e_ucEdge) {
 		for (int i = 0; i < m_nWidth; ++i) {
 			delete[] e_ucEdge[i];
 		}
 		delete[] e_ucEdge;
 	}
+	
 
 	e_ucEdge = new BFSVertex* [m_nWidth];
 	for (int i = 0; i < m_nWidth; ++i) {
@@ -524,6 +563,10 @@ unsigned char* ImpressionistDoc::getEdge(intPair** gradient) {
 			}
 			
 		}
+	}
+
+	if (flag) {
+		m_ucBitmap = edgeImage;
 	}
 
 	return edgeImage;
