@@ -8,6 +8,8 @@
 #include <FL/fl_ask.h>
 
 #include <math.h>
+#include <sstream>
+#include <iostream>
 
 #include "impressionistUI.h"
 #include "impressionistDoc.h"
@@ -604,6 +606,45 @@ void ImpressionistUI::cb_run_button(Fl_Widget* o, void* v) {
 	//	TODO
 }
 
+//------------------------------------------------------------
+//	Implement Customized Filter Kernel
+//------------------------------------------------------------
+void ImpressionistUI::cb_filterkernelsize(Fl_Widget* o, void* v) {
+	ImpressionistUI* pUI = (ImpressionistUI*)(o->user_data());
+	strcpy(pUI->m_FilterKernelSize, ((Fl_Input*)o)->value());
+}
+
+void ImpressionistUI::cb_filterkernelinput(Fl_Widget* o, void* v) {
+	ImpressionistUI* pUI = (ImpressionistUI*)(o->user_data());
+	strcpy(pUI->m_FilterKernelText, ((Fl_Input*)o)->value());
+}
+
+void ImpressionistUI::cb_filterkernelapply(Fl_Widget* o, void* v) {
+	ImpressionistUI* pUI = (ImpressionistUI*)(o->user_data());
+
+	pUI->m_customizedFilterKernel.clear();
+	if ((pUI->m_FilterKernelSize != nullptr) && (pUI->m_FilterKernelSize[0] == '\0') || (pUI->m_FilterKernelText != nullptr) && (pUI->m_FilterKernelText[0] == '\0')) { // boundary case
+		return;
+	}
+	int size = atoi(pUI->m_FilterKernelSize);			// checked above
+	std::stringstream iss(pUI->m_FilterKernelText);		// checked above
+	for (int i = 0; i < size; i++) {
+		std::vector<double> x;
+		for (int j = 0; j < size; j++) {
+			double val;
+			if (!(iss >> val))
+				return;
+			x.push_back(val);
+			std::cout << val << " " << std::endl;
+		}
+		pUI->m_customizedFilterKernel.push_back(x);
+	}
+	pUI->m_paintView->applyFilterKernel(pUI->m_customizedFilterKernel, pUI->m_FilterKernelNormalize);
+}
+
+void ImpressionistUI::cb_filterkernelnormalize(Fl_Widget* o, void* v) {
+	((ImpressionistUI*)(o->user_data()))->m_FilterKernelNormalize = bool(((Fl_Button*)o)->value());
+}
 
 //-----------------------------------------------------------
 // Updates the brush size to use from the value of the size
@@ -904,6 +945,10 @@ void ImpressionistUI::setSize( int size )
 		m_BrushSizeSlider->value(m_nSize);
 }
 
+std::vector<std::vector<double>> ImpressionistUI::getCustomizedFilterKernel() {
+	return m_customizedFilterKernel;
+}
+
 // Main menu definition
 Fl_Menu_Item ImpressionistUI::menuitems[] = {
 	{ "&File",		0, 0, 0, FL_SUBMENU },
@@ -1026,6 +1071,11 @@ ImpressionistUI::ImpressionistUI() {
 	m_lClip = true;
 	m_lAnother = false;
 	m_rSizeRandom = true;
+	m_FilterKernelNormalize = false;
+	m_FilterKernelText = new char[255];
+	memset(m_FilterKernelText, 0, 255);
+	m_FilterKernelSize = new char[255];
+	memset(m_FilterKernelSize, 0, 255);
 	m_pThreshold = 100;
 	m_pCurvature = 1.00;
 	m_pBlur = 0.50;
@@ -1043,7 +1093,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_pJv = 0.00;
 
 	// brush dialog definition
-	m_brushDialog = new Fl_Window(400, 325, "Brush Dialog");
+	m_brushDialog = new Fl_Window(400, 370, "Brush Dialog");
 		// Add a brush type choice to the dialog
 		m_BrushTypeChoice = new Fl_Choice(50,10,150,25,"&Brush");
 		m_BrushTypeChoice->user_data((void*)(this));	// record self to be used by static callback functions
@@ -1179,6 +1229,31 @@ ImpressionistUI::ImpressionistUI() {
 			m_DoItButton->user_data((void*)(this));	// record self to be used by static callback functions
 			m_DoItButton->callback(cb_do_it_button);
 		edgeThresholdGroup->end();
+
+		// Create a filter kernel interface
+		Fl_Group* filterKernelGroup = new Fl_Group(10, 320, 380, 40);
+			filterKernelGroup->box(FL_THIN_UP_BOX);
+			// Add input text box to the group
+			m_FilterKernelInput = new Fl_Input(60, 322, 110, 36, "Filter\nKernel");
+			m_FilterKernelInput->value(m_FilterKernelText);
+			m_FilterKernelInput->user_data((void*)(this));	// record self to be used by static callback functions
+			m_FilterKernelInput->callback(cb_filterkernelinput);
+			m_FilterKernelInputSize = new Fl_Input(205, 330, 25, 22, "Size");
+			m_FilterKernelInputSize->value(m_FilterKernelSize);
+			m_FilterKernelInputSize->user_data((void*)(this));	// record self to be used by static callback functions
+			m_FilterKernelInputSize->callback(cb_filterkernelsize);
+
+			// Add filter kernel normalize button to the group
+			m_FilterKernelNormalizeButton = new Fl_Light_Button(240, 330, 80, 22, "Normalize");
+			m_FilterKernelNormalizeButton->value(m_FilterKernelNormalize);
+			m_FilterKernelNormalizeButton->user_data((void*)(this));	// record self to be used by static callback functions
+			m_FilterKernelNormalizeButton->callback(cb_filterkernelnormalize);
+
+			// Add filter kernel apply button to the group
+			m_FilterKernelApplyButton = new Fl_Button(330, 330, 50, 22, "Apply");
+			m_FilterKernelApplyButton->user_data((void*)(this));	// record self to be used by static callback functions
+			m_FilterKernelApplyButton->callback(cb_filterkernelapply);
+		filterKernelGroup->end();
     m_brushDialog->end();	
 
 	// colors dialog definition

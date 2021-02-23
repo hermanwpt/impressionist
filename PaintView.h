@@ -12,6 +12,7 @@
 #include <FL/gl.h>
 #include <GL/glu.h>
 #include <stdlib.h>
+#include <vector>
 
 class ImpressionistDoc;
 
@@ -29,6 +30,8 @@ public:
 	void SaveCurrentContent();
 
 	void RestoreContent();
+
+	void applyFilterKernel(std::vector<std::vector<double>> fk, bool normalized);
 
 	ImpressionistDoc *m_pDoc;
 
