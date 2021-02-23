@@ -365,16 +365,23 @@ void ImpressionistUI::cb_brushChoice(Fl_Widget* o, void* v)
 		pUI->m_StrokeDirectionTypeChoice->activate();
 		pUI->m_LineWidthSlider->activate();
 		pUI->m_LineAngleSlider->activate();
-		pUI->m_EdgeClippingButton->activate();
 		pUI->m_AnotherGradientButton->activate();
 	}
 	else {
 		pUI->m_StrokeDirectionTypeChoice->deactivate();
 		pUI->m_LineWidthSlider->deactivate();
 		pUI->m_LineAngleSlider->deactivate();
-		pUI->m_EdgeClippingButton->deactivate();
 		pUI->m_AnotherGradientButton->deactivate();
 	}
+
+	if (type != BRUSH_SCATTERED_POINTS) {
+		pUI->m_EdgeClippingButton->activate();
+	}
+	else {
+		pUI->m_EdgeClippingButton->deactivate();
+	}
+	
+	
 }
 
 //-------------------------------------------------------------
@@ -866,6 +873,21 @@ double ImpressionistUI::getAlpha()
 	return m_nAlpha;
 }
 
+double ImpressionistUI::getColorR()
+{
+	return m_nColorR;;
+}
+
+double ImpressionistUI::getColorG()
+{
+	return m_nColorG;
+}
+
+double ImpressionistUI::getColorB()
+{
+	return m_nColorB;
+}
+
 //------------------------------------------------
 //	Return the LINE (or other) brush clipping
 //	option (TRUE?/FASLE)
@@ -1014,7 +1036,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_nColorG = 1.00;
 	m_nColorB = 1.00;
 	m_nAlpha = 1.00;
-	m_lClip = true;
+	m_lClip = false;
 	m_lAnother = false;
 	m_rSizeRandom = true;
 	m_pThreshold = 100;
@@ -1112,7 +1134,6 @@ ImpressionistUI::ImpressionistUI() {
 		m_EdgeClippingButton->value(m_lClip);
 		m_EdgeClippingButton->user_data((void*)(this));	// record self to be used by static callback functions
 		m_EdgeClippingButton->callback(cb_edge_clipping_button);
-		m_EdgeClippingButton->deactivate();
 
 		// Add another gradient button to the dialog
 		m_AnotherGradientButton = new Fl_Light_Button(240, 200, 150, 25, "&Another Gradient");

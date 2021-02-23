@@ -92,6 +92,9 @@ public:
 	int					getAngle();
 	int					getThreshold();
 	double				getAlpha();
+	double				getColorR();
+	double				getColorG();
+	double				getColorB();
 	bool				getClip();
 	void				setSize(int size);
 	void				setAngle(int angle);

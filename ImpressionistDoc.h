@@ -65,6 +65,9 @@ public:
 	int		getStrokeDirectionType();
 	int		getBrushType();
 	double	getAlpha();
+	double	getColorR();
+	double	getColorG();
+	double	getColorB();
 	bool	getClip();
 	void	setSize(int size);					// set the UI size
 	char*	getImageName();						// get the current image name

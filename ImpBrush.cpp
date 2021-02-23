@@ -47,13 +47,16 @@ void ImpBrush::SetColor (const Point source) {
 
 	GLubyte color[3];
 	double alpha = pDoc->getAlpha();
+	double blendR = pDoc->getColorR();
+	double blendG = pDoc->getColorG();
+	double blendB = pDoc->getColorB();
 
 	memcpy ( color, pDoc->GetOriginalPixel( source ), 3 );
  
 	glColor4f(
-		(float)color[0] / 255.0f,
-		(float)color[1] / 255.0f,
-		(float)color[2] / 255.0f,
+		(float)color[0] / 255.0f * blendR,
+		(float)color[1] / 255.0f * blendG,
+		(float)color[2] / 255.0f * blendB,
 		(float)alpha
 	);
 }

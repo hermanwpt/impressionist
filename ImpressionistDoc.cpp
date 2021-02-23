@@ -176,6 +176,21 @@ double ImpressionistDoc::getAlpha()
 	return m_pUI->getAlpha();
 }
 
+double ImpressionistDoc::getColorR()
+{
+	return m_pUI->getColorR();
+}
+
+double ImpressionistDoc::getColorG()
+{
+	return m_pUI->getColorG();
+}
+
+double ImpressionistDoc::getColorB()
+{
+	return m_pUI->getColorB();
+}
+
 //---------------------------------------------------------
 // Returns whether edge clipping is turned on
 //---------------------------------------------------------
