@@ -326,6 +326,18 @@ void ImpressionistDoc::undo() {
 }
 
 //------------------------------------------------------------------
+// swap Orig and Painting view
+//------------------------------------------------------------------
+void ImpressionistDoc::swap() {
+	unsigned char* temp = m_ucBitmap;
+	m_ucBitmap = m_ucPainting;
+	m_ucOrig = m_ucPainting;
+	m_ucPainting = temp;
+	m_pUI->m_origView->refresh();
+	m_pUI->m_paintView->refresh();
+}
+
+//------------------------------------------------------------------
 // Get the color of the pixel in the original image at coord x and y
 //------------------------------------------------------------------
 GLubyte* ImpressionistDoc::GetOriginalPixel( int x, int y )

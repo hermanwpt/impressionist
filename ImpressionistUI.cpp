@@ -261,6 +261,14 @@ void ImpressionistUI::cb_undo(Fl_Menu_* o, void* v) {
 	pDoc->undo();
 }
 
+//-------------------------------------------------------------
+//	swap origView and paintView
+//-------------------------------------------------------------
+void ImpressionistUI::cb_swap(Fl_Menu_* o, void* v) {
+	ImpressionistDoc* pDoc = whoami(o)->getDocument();
+	pDoc->swap();
+}
+
 //------------------------------------------------------------
 // Clears the paintview canvas.
 // Called by the UI when the clear canvas menu item is chosen
@@ -892,6 +900,7 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Colors...",		FL_ALT + 'k', (Fl_Callback*)ImpressionistUI::cb_colors },
 		{ "&Paintly...",	FL_ALT + 'p', (Fl_Callback*)ImpressionistUI::cb_paintly, 0, FL_MENU_DIVIDER },
 
+		{ "&Swap...",		FL_ALT + 'w', (Fl_Callback*)ImpressionistUI::cb_swap },
 		{ "&Undo",		FL_ALT + 'z', (Fl_Callback*)ImpressionistUI::cb_undo, 0, FL_MENU_DIVIDER },
 
 		{ "&Load Edge Image...",	FL_ALT + 'e', (Fl_Callback*)ImpressionistUI::cb_load_edge_image },
