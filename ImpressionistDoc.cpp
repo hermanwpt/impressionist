@@ -375,6 +375,28 @@ int ImpressionistDoc::loadOtherImage(char *iname, bool mode) {
 	return 1;
 }
 
+int ImpressionistDoc::loadMuralImage(char* iname) {
+	//	Try to open the image to read
+	unsigned char* data;
+	int	width, height;
+
+	if ((data = readBMP(iname, width, height)) == NULL) {
+		fl_alert("Can't load bitmap file");
+		return 0;
+	}
+	//	Images other than the original must have matching
+	//	dimensions with the original image
+	else if ((width != m_nWidth) || (height != m_nHeight)) {
+		fl_alert("Different dimension!");
+		return 0;
+	}
+
+	if (m_ucOrig) delete[] m_ucOrig;
+	m_ucOrig = m_ucBitmap = data;
+
+	return 1;
+}
+
 //----------------------------------------------------------------
 // Save the specified image
 // This is called by the UI when the save image menu button is 
@@ -425,6 +447,18 @@ void ImpressionistDoc::saveLastPaint() {
 //------------------------------------------------------------------
 void ImpressionistDoc::undo() {
 	memcpy(m_ucPainting, m_ucLastPaint, m_nWidth * m_nHeight * 3 * sizeof(unsigned char));
+	m_pUI->m_paintView->refresh();
+}
+
+//------------------------------------------------------------------
+// swap Orig and Painting view
+//------------------------------------------------------------------
+void ImpressionistDoc::swap() {
+	unsigned char* temp = m_ucBitmap;
+	m_ucBitmap = m_ucPainting;
+	m_ucOrig = m_ucPainting;
+	m_ucPainting = temp;
+	m_pUI->m_origView->refresh();
 	m_pUI->m_paintView->refresh();
 }
 
