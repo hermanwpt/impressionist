@@ -47,6 +47,7 @@ public:
 
 	int		loadImage(char *iname);						// called by the UI to load image
 	int		loadOtherImage(char* iname, bool mode);		// called by the UI to load edge/another image
+	int		loadMuralImage(char* iname);				// called by the UI to load mural image
 	int		saveImage(char *iname);						// called by the UI to save image
 
 
