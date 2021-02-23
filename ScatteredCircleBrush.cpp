@@ -39,7 +39,7 @@ void ScatteredCircleBrush::BrushMove(const Point source, const Point target)
 		double xOffset = (double)frand() * (double)size - halfSize;
 		double yOffset = (double)frand() * (double)size - halfSize;
 
-		c_pBrushes[BRUSH_CIRCLES]->BrushMove(Point(target.x + xOffset, target.y + yOffset), target);
+		c_pBrushes[BRUSH_CIRCLES]->BrushMove(source, Point(target.x + xOffset, target.y + yOffset));
 	}
 }
 

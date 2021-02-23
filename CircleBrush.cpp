@@ -152,6 +152,21 @@ void CircleBrush::BrushMove(const Point source, const Point target) {
 		glVertex2d(target.x + xOffset, target.y + yOffset);
 	}
 	glEnd();
+
+	// Clear previously applied clipping
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glStencilOp(GL_REPLACE, GL_REPLACE, GL_REPLACE);	// Always draw to the stencil buffer
+
+	glClear(GL_STENCIL_BUFFER_BIT);						// Clear the stencil buffer, effectively making them all 0s
+	glBegin(GL_POLYGON);
+	glVertex2f(0, pDoc->m_nHeight - pDoc->m_nPaintHeight);
+	glVertex2f(pDoc->m_nPaintWidth, pDoc->m_nHeight - pDoc->m_nPaintHeight);
+	glVertex2f(pDoc->m_nPaintWidth, pDoc->m_nHeight);
+	glVertex2f(0, pDoc->m_nHeight);
+	glEnd();
+
+	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 }
 
 void CircleBrush::BrushEnd(const Point source, const Point target) {

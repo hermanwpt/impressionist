@@ -91,12 +91,14 @@ public:
 	int					getWidth();
 	int					getAngle();
 	int					getThreshold();
+	int					getSpacing();
 	double				getAlpha();
 	double				getColorR();
 	double				getColorG();
 	double				getColorB();
 	bool				getClip();
 	bool				getAnotherGradient();
+	bool				getSizeRandom();
 	void				setSize(int size);
 	void				setAngle(int angle);
 

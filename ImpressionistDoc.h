@@ -64,12 +64,14 @@ public:
 	int		getThreshold();
 	int		getStrokeDirectionType();
 	int		getBrushType();
+	int		getSpacing();
 	double	getAlpha();
 	double	getColorR();
 	double	getColorG();
 	double	getColorB();
 	bool	getClip();
 	bool	getAnotherGradient();
+	bool	getSizeRandom();
 	void	setSize(int size);					// set the UI size
 	char*	getImageName();						// get the current image name
 	

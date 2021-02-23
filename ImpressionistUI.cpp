@@ -570,7 +570,7 @@ void ImpressionistUI::cb_another_gradient_button(Fl_Widget* o, void* v) {
 //	Called by the UI when the size random button is pushed
 //------------------------------------------------------------
 void ImpressionistUI::cb_size_random_button(Fl_Widget* o, void* v) {
-	((ImpressionistUI*)(o->user_data()))->m_rSizeRandom = bool(((Fl_Slider*)o)->value());
+	((ImpressionistUI*)(o->user_data()))->m_rSizeRandom = bool(((Fl_Button*)o)->value());
 }
 
 //------------------------------------------------------------
@@ -579,6 +579,8 @@ void ImpressionistUI::cb_size_random_button(Fl_Widget* o, void* v) {
 //------------------------------------------------------------
 void ImpressionistUI::cb_paint_button(Fl_Widget* o, void* v) {
 	//	TODO
+	((ImpressionistUI*)(o->user_data()))->m_paintView->setAutoPaint(true);
+	((ImpressionistUI*)(o->user_data()))->m_paintView->refresh();
 }
 
 //------------------------------------------------------------
@@ -865,6 +867,11 @@ int ImpressionistUI::getThreshold()
 	return m_eThreshold;
 }
 
+int ImpressionistUI::getSpacing()
+{
+	return m_rSpacing;
+}
+
 //------------------------------------------------
 // Return the brush alpha value
 //------------------------------------------------
@@ -900,6 +907,11 @@ bool ImpressionistUI::getClip()
 bool ImpressionistUI::getAnotherGradient()
 {
 	return m_lAnother;
+}
+
+bool ImpressionistUI::getSizeRandom()
+{
+	return m_rSizeRandom;
 }
 
 //------------------------------------------------

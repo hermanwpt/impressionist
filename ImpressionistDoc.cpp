@@ -169,6 +169,11 @@ int ImpressionistDoc::getBrushType()
 	return m_pCurrentBrushType;
 }
 
+int ImpressionistDoc::getSpacing()
+{
+	return m_pUI->getSpacing();
+}
+
 //---------------------------------------------------------
 // Returns the alpha value of the brush.
 //---------------------------------------------------------
@@ -202,6 +207,11 @@ bool ImpressionistDoc::getClip() {
 bool ImpressionistDoc::getAnotherGradient()
 {
 	return m_pUI->getAnotherGradient();
+}
+
+bool ImpressionistDoc::getSizeRandom()
+{
+	return m_pUI->getSizeRandom();
 }
 
 //---------------------------------------------------------

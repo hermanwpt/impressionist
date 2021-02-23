@@ -30,6 +30,8 @@ public:
 
 	void RestoreContent();
 
+	void setAutoPaint(bool flag);
+
 	ImpressionistDoc *m_pDoc;
 
 private:
@@ -49,6 +51,8 @@ private:
 	int		m_lEndX;
 	int		m_lEndY;
 
+	// For autopaint
+	bool	m_nAuto;
 };
 
 #endif
