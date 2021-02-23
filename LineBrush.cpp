@@ -42,7 +42,13 @@ void LineBrush::BrushMove(const Point source, const Point target) {
 
 	int angle, x, y;
 	double temp;
-	intPair** gradient = pDoc->g_ucOrig;
+	intPair** gradient;
+	if (pDoc->getAnotherGradient()) {
+		gradient = pDoc->g_ucAnother;
+	}
+	else {
+		gradient = pDoc->g_ucOrig;
+	}
 	switch (pDoc->getStrokeDirectionType()) {
 	case STROKE_SLIDER:
 		angle = pDoc->getAngle();
@@ -76,7 +82,6 @@ void LineBrush::BrushMove(const Point source, const Point target) {
 		}
 		break;
 	case STROKE_BRUSH_DIRECTION:
-		printf("Source: (%d, %d)\t\tPrevloc: (%d, %d)\n", source.x, source.y, prevloc.x, prevloc.y);
 		if (prevloc.x - source.x != 0) {
 			temp = atan2((source.y - prevloc.y), (source.x - prevloc.x)); // Use atan2 instead for real-time operations
 		} else {

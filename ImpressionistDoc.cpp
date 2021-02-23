@@ -37,6 +37,7 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucLastPaint	= NULL;
 
 	g_ucOrig		= NULL;
+	g_ucAnother		= NULL;
 	e_ucEdge		= NULL;
 
 	m_pCurrentBrushType = BRUSH_POINTS;
@@ -198,6 +199,11 @@ bool ImpressionistDoc::getClip() {
 	return m_pUI->getClip();
 }
 
+bool ImpressionistDoc::getAnotherGradient()
+{
+	return m_pUI->getAnotherGradient();
+}
+
 //---------------------------------------------------------
 // Load the specified image
 // This is called by the UI when the load image button is 
@@ -226,6 +232,13 @@ int ImpressionistDoc::loadImage(char *iname)
 		delete[] g_ucOrig;
 	}
 	g_ucOrig = NULL;
+	if (g_ucAnother) {
+		for (int i = 0; i < m_nWidth; ++i) {
+			delete[] g_ucAnother[i];
+		}
+		delete[] g_ucAnother;
+	}
+	g_ucAnother = NULL;
 
 	// reflect the fact of loading the new image
 	m_nWidth		= width;
@@ -245,6 +258,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_ucBitmap		= m_ucOrig;
 
 	g_ucOrig		= getGradient();
+	g_ucAnother		= getGradient();
 	m_ucEdge		= getEdge(g_ucOrig);	//	TODO: Replace with a function that generates an edge image of data
 	m_ucAnother		= another_data;
 	
@@ -309,6 +323,17 @@ int ImpressionistDoc::loadOtherImage(char *iname, bool mode) {
 	if (mode) {
 		if (m_ucAnother) delete[] m_ucAnother;
 		m_ucAnother = data;
+		unsigned char* temp = m_ucBitmap;	// Save what the pointer was pointing at
+
+		if (g_ucAnother) {
+			for (int i = 0; i < m_nWidth; ++i) {
+				delete[] g_ucAnother[i];
+			}
+			delete[] g_ucAnother;
+		}
+		m_ucBitmap = m_ucAnother;
+		g_ucAnother = getGradient();
+		m_ucBitmap = temp;
 	} else {
 		if (m_ucEdge) delete[] m_ucEdge;
 		m_ucEdge = data;
@@ -437,9 +462,11 @@ intPair** ImpressionistDoc::getGradient() {
 	for (int i = 0; i < m_nWidth; ++i) {
 		for (int j = 0; j < m_nHeight; ++j) {
 			GLubyte color[3];
-			memcpy(color, GetOriginalPixel(i, j), 3);
+			color[0] = m_ucBitmap[(i + j * m_nWidth) * 3];
+			color[1] = m_ucBitmap[(i + j * m_nWidth) * 3 + 1];
+			color[2] = m_ucBitmap[(i + j * m_nWidth) * 3 + 2];
 
-			greyscale[i][j] = color[0]; // (GLubyte)(0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2]);	// From tutorial notes
+			greyscale[i][j] = (GLubyte)(0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2]);	// From tutorial notes
 		}
 	}
 

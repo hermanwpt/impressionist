@@ -562,7 +562,7 @@ void ImpressionistUI::cb_edge_clipping_button(Fl_Widget* o, void* v) {
 //	pushed
 //------------------------------------------------------------
 void ImpressionistUI::cb_another_gradient_button(Fl_Widget* o, void* v) {
-	((ImpressionistUI*)(o->user_data()))->m_lAnother = bool(((Fl_Slider*)o)->value());
+	((ImpressionistUI*)(o->user_data()))->m_lAnother = bool(((Fl_Button*)o)->value());
 }
 
 //------------------------------------------------------------
@@ -895,6 +895,11 @@ double ImpressionistUI::getColorB()
 bool ImpressionistUI::getClip()
 {
 	return m_lClip;
+}
+
+bool ImpressionistUI::getAnotherGradient()
+{
+	return m_lAnother;
 }
 
 //------------------------------------------------

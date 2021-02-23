@@ -96,6 +96,7 @@ public:
 	double				getColorG();
 	double				getColorB();
 	bool				getClip();
+	bool				getAnotherGradient();
 	void				setSize(int size);
 	void				setAngle(int angle);
 
