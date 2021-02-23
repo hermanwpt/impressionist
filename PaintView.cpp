@@ -358,6 +358,8 @@ void PaintView::applyFilterKernel(std::vector<std::vector<double>> fk, bool norm
 				}
 			}
 		}
-		memcpy(m_pDoc->m_ucPainting, newImage, height * width * 3);
+	memcpy(m_pDoc->m_ucPainting, newImage, height * width * 3);
+	delete[] oldImage;
+	delete[] newImage;
 	refresh();
 }
