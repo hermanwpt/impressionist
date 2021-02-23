@@ -12,6 +12,7 @@
 #include "ImpBrush.h"
 #include "LineBrush.h"
 #include <math.h>
+#include <vector>
 
 
 #define LEFT_MOUSE_DOWN		1
@@ -323,4 +324,40 @@ void PaintView::RestoreContent()
 				  m_pPaintBitstart);
 
 //	glDrawBuffer(GL_FRONT);
+}
+
+void PaintView::applyFilterKernel(std::vector<std::vector<double>> fk, bool normalized) {
+	int sum = 0;
+	for (int i = 0; i < fk.size(); i++)
+		for (int j = 0; j < fk.size(); j++)
+			sum += fk[i][j];
+
+	int height = m_pDoc->m_nHeight;
+	int width = m_pDoc->m_nWidth;
+	int filterSize = fk.size();
+	unsigned char* oldImage = new unsigned char[height * width * 3];
+	unsigned char* newImage = new unsigned char[height * width * 3];
+	memcpy(oldImage, m_pDoc->m_ucPainting, height * width * 3);
+	memset(newImage, 0, height * width * 3);
+
+		for (int i = 0; i < height; i++) {
+			for (int j = 0; j < width; j++) {
+				for (int x = 0; x < filterSize; x++) {
+					for (int y = 0; y < filterSize; y++) {
+						for (int rgb = 0; rgb < 3; rgb++) {
+							int pixelX = max(0, min(j - (filterSize) / 2 + x, width - 1));
+							int pixelY = max(0, min(i - (filterSize) / 2 + y, height - 1));
+							double newPixel = fk[x][y] * oldImage[(pixelY * width + pixelX) * 3 + rgb];
+							if (normalized)
+								newPixel = newPixel / sum;
+							// IMPORTANT: i*width+j represents all cells in previous row + cells in current row
+							newImage[(i * width + j) * 3 + rgb] = min(255, max(m_pDoc->m_ucPainting[(i * width + j) * 3 + rgb] + newPixel, 0));
+							
+						}
+					}
+				}
+			}
+		}
+		memcpy(m_pDoc->m_ucPainting, newImage, height * width * 3);
+	refresh();
 }

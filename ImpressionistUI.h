@@ -23,6 +23,8 @@
 
 #include "ImpBrush.h"
 
+#include <vector>
+
 class ImpressionistUI {
 public:
 	ImpressionistUI();
@@ -68,13 +70,18 @@ public:
 	Fl_Slider*			m_PaintlyJsSlider;
 	Fl_Slider*			m_PaintlyJvSlider;
 
+	Fl_Input*			m_FilterKernelInput;
+	Fl_Input*			m_FilterKernelInputSize;
+
 	Fl_Button*          m_ClearCanvasButton;
 	Fl_Button*			m_PaintButton;
 	Fl_Button*			m_DoItButton;
 	Fl_Button*			m_RunButton;
+	Fl_Button*			m_FilterKernelApplyButton;
 	Fl_Light_Button*	m_EdgeClippingButton;
 	Fl_Light_Button*	m_AnotherGradientButton;
 	Fl_Light_Button*	m_SizeRandomButton;
+	Fl_Light_Button*	m_FilterKernelNormalizeButton;
 
 	Fl_Color_Chooser*	m_ColorChooser;
 
@@ -95,6 +102,7 @@ public:
 	bool				getClip();
 	void				setSize(int size);
 	void				setAngle(int angle);
+	std::vector<std::vector<double>> getCustomizedFilterKernel();
 
 private:
 	ImpressionistDoc*	m_pDoc;		// pointer to document to communicate with the document
@@ -137,7 +145,12 @@ private:
 	double m_pJh;
 	double m_pJs;
 	double m_pJv;
-	
+
+	// Filter Kernel attributes
+	bool m_FilterKernelNormalize;
+	char* m_FilterKernelText;
+	char* m_FilterKernelSize;
+	std::vector<std::vector<double>> m_customizedFilterKernel;
 
 	// Static class members
 	static Fl_Menu_Item		menuitems[];
@@ -180,6 +193,10 @@ private:
 	static void cb_paint_button(Fl_Widget* o, void* v);
 	static void cb_do_it_button(Fl_Widget* o, void* v);
 	static void cb_run_button(Fl_Widget* o, void* v);
+	static void cb_filterkernelsize(Fl_Widget* o, void* v);
+	static void cb_filterkernelinput(Fl_Widget* o, void* v);
+	static void cb_filterkernelapply(Fl_Widget* o, void* v);
+	static void cb_filterkernelnormalize(Fl_Widget* o, void* v);
 
 	static void	cb_sizeSlides(Fl_Widget* o, void* v);
 	static void cb_widthSlides(Fl_Widget* o, void* v);
