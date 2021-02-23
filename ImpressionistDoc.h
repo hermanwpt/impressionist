@@ -41,6 +41,7 @@ public:
 	void	setPaintlyStyle(int type);			// called by the UI to set the paintlyStyleType
 	void	setPaintlyStrokeType(int type);		// called by the UI to set the paintlyStrokeType
 	void	undo();								// called by the UI "Undo"
+	void	swap();								// swap origView and paintView
 	void	saveLastPaint();					// save the painting to m_ucLastPaint after every brush
 
 	int		getSize();							// get the UI size
