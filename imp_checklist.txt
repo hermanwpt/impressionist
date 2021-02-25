@@ -5,7 +5,7 @@ HKUST login(s): kylawah, ptwongaa
 
 Delete yes/no when appropriate
 
-W per new brush						yes (6)
+W per new brush						yes (6 new brushes)
 W border clipping					yes
 W (red) marker						yes
 W swap							yes
