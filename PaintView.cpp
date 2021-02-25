@@ -393,24 +393,26 @@ void PaintView::applyFilterKernel(std::vector<std::vector<double>> fk, bool norm
 	memcpy(oldImage, m_pDoc->m_ucPainting, height * width * 3);
 	memset(newImage, 0, height * width * 3);
 
-		for (int i = 0; i < height; i++) {
-			for (int j = 0; j < width; j++) {
+	for (int rgb = 0; rgb < 3; rgb++) {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				int newImgPx = 0;
 				for (int x = 0; x < filterSize; x++) {
 					for (int y = 0; y < filterSize; y++) {
-						for (int rgb = 0; rgb < 3; rgb++) {
-							int pixelX = max(0, min(j - (filterSize) / 2 + x, width - 1));
-							int pixelY = max(0, min(i - (filterSize) / 2 + y, height - 1));
-							double newPixel = fk[x][y] * oldImage[(pixelY * width + pixelX) * 3 + rgb];
-							if (normalized)
-								newPixel = newPixel / sum;
-							// IMPORTANT: i*width+j represents all cells in previous row + cells in current row
-							newImage[(i * width + j) * 3 + rgb] = min(255, max(m_pDoc->m_ucPainting[(i * width + j) * 3 + rgb] + newPixel, 0));
-							
+						int pixelX = i - (filterSize) / 2 + x;
+						int pixelY = j - (filterSize) / 2 + y;
+						if (pixelX < 0 || pixelX > width - 1 || pixelY < 0 || pixelY > height - 1) {
+							continue;
 						}
+						newImgPx += fk[x][y] * oldImage[(pixelY * width + pixelX) * 3 + rgb];
 					}
 				}
+				if (normalized)
+					newImgPx = newImgPx / sum;
+				newImage[(width * j + i) * 3 + rgb] = newImgPx;
 			}
 		}
+	}
 	memcpy(m_pDoc->m_ucPainting, newImage, height * width * 3);
 	delete[] oldImage;
 	delete[] newImage;

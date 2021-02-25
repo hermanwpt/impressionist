@@ -25,6 +25,8 @@
 #include "ScatteredCrescentBrush.h"
 #include "ScatteredTriangleBrush.h"
 #include "ScatteredSpiralBrush.h"
+#include "CustomBrush.h"
+#include "WarpBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -79,6 +81,14 @@ ImpressionistDoc::ImpressionistDoc()
 		= new ScatteredTriangleBrush(this, "Scattered Triangles");
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_SPIRALS]
 		= new ScatteredSpiralBrush(this, "Scattered Spirals");
+	ImpBrush::c_pBrushes[BRUSH_SHARPENING]
+		= new CustomBrush(this, "Sharpening");
+	((CustomBrush*)ImpBrush::c_pBrushes[BRUSH_SHARPENING])->selectFilter(SHARPENING);
+	ImpBrush::c_pBrushes[BRUSH_BLUR]
+		= new CustomBrush(this, "Blur");
+	((CustomBrush*)ImpBrush::c_pBrushes[BRUSH_BLUR])->selectFilter(BLUR);
+	ImpBrush::c_pBrushes[BRUSH_WARP]
+		= new WarpBrush(this, "Warp");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];

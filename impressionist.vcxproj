@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
     <ClCompile Include="CrescentBrush.cpp" />
+    <ClCompile Include="CustomBrush.cpp" />
     <ClCompile Include="ImpBrush.cpp" />
     <ClCompile Include="Impressionist.cpp" />
     <ClCompile Include="ImpressionistDoc.cpp" />
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClInclude Include="Bitmap.h" />
     <ClInclude Include="CrescentBrush.h" />
+    <ClInclude Include="CustomBrush.h" />
     <ClInclude Include="ScatteredCrescentBrush.h" />
     <ClInclude Include="ImpBrush.h" />
     <ClInclude Include="Impressionist.h" />

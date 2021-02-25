@@ -414,7 +414,9 @@ void ImpressionistUI::cb_brushChoice(Fl_Widget* o, void* v)
 		pUI->m_EdgeClippingButton->deactivate();
 	}
 	
-	
+	if (type == BRUSH_BLUR || type == BRUSH_SHARPENING || type == BRUSH_WARP) {
+		pUI->m_EdgeClippingButton->deactivate();
+	}
 }
 
 //-------------------------------------------------------------
@@ -1064,6 +1066,9 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {"Scattered Crescents",	FL_ALT + 'a', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SCATTERED_CRESCENTS},
   {"Scattered Triangles",	FL_ALT + 'i', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SCATTERED_TRIANGLES},
   {"Scatttered Spirals",	FL_ALT + 'g', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SCATTERED_SPIRALS},
+  {"Sharpening",	FL_ALT + 'h', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SHARPENING},
+  {"Blur",	FL_ALT + 'b', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_BLUR},
+  {"Warp",	FL_ALT + 'w', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_WARP},
   {0}
 };
 
