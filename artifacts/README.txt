@@ -1,4 +1,4 @@
-B Image dissolve
+B Dissolve
 - Input file	: dissolve_INPUT1.bmp (Original image)
 		  dissolve_INPUT2.bmp (Another image)
 - Output file	: dissolve_OUTPUT.bmp
@@ -13,14 +13,11 @@ B Image dissolve
 		  - Line angle: 0
 		  - Edge clipping: OFF
 
+B RGB Scale
 BW Edge clipping
 - Input file	: edge_clipping_user_INPUT1.bmp (Original image)
 		  edge_clipping_user_INPUT2.bmp (Edge image)
 - Output file	: edge_clipping_user_OUTPUT.bmp
-- Settings	: - Brush type: Circle (inside hexagon), Line (outside hexagon)
-		  - Brush size: 40
-		  - Line width: 5
-		  - Line angle: 90
 
 2B Edge detection + user-specified edge clipping
 - Input file	: edge_detection_and_clipping_INPUT.bmp
@@ -31,3 +28,17 @@ BW Edge clipping
 		  - Stroke direction: Gradient
 		  - Edge clipping: ON
 		  - Edge threshold: 200 (default setting)
+
+BW Gradient from user-specified image
+BW Automatic paint whole image
+- Input file	: ferry.bmp (Original image)
+		  ferry-gradient-circular (Another image)
+- Output file	: gradient_user_OUTPUT
+- Settings	: - Brush type: Lines
+		  - Brush size: 7
+		  - Brush width: 2
+		  - Stroke direction: Gradient
+		  - Edge clipping: ON
+		  - Another image: ON
+		  - Spacing: 1
+		  - Size rand.: OFF
