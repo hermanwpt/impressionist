@@ -422,7 +422,7 @@ int ImpressionistDoc::clearCanvas()
 	if ( m_ucPainting ) 
 	{
 		delete [] m_ucPainting;
-		delete[] m_ucLastPaint;
+		if (m_ucLastPaint) delete[] m_ucLastPaint;
 
 		// allocate space for draw view
 		m_ucPainting	= new unsigned char [m_nPaintWidth*m_nPaintHeight*3];

@@ -187,6 +187,7 @@ private:
 	static void cb_faster(Fl_Menu_* o, void* v);
 	static void cb_safer(Fl_Menu_* o, void* v);
 	static void	cb_about(Fl_Menu_* o, void* v);
+	static void cb_dissolve(Fl_Menu_* o, void* v);
 
 	static void	cb_brushChoice(Fl_Widget* o, void* v);
 	static void cb_strokeDirectionTypeChoice(Fl_Widget* o, void* v);

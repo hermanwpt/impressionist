@@ -33,6 +33,8 @@ public:
 
 
 	void setAutoPaint(bool flag);
+	void setDissolve(bool flag);
+	bool getDissolve();
 
 	void applyFilterKernel(std::vector<std::vector<double>> fk, bool normalized);
 
@@ -58,6 +60,9 @@ private:
 
 	// For autopaint
 	bool	m_nAuto;
+
+	// For image dissolve
+	bool	m_nDissolve;
 };
 
 #endif

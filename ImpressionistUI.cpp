@@ -364,6 +364,12 @@ void ImpressionistUI::cb_about(Fl_Menu_* o, void* v)
 	fl_message("Impressionist FLTK version for CS341, Spring 2002");
 }
 
+void ImpressionistUI::cb_dissolve(Fl_Menu_* o, void* v)
+{
+	whoami(o)->m_paintView->setDissolve(true);
+	whoami(o)->m_paintView->refresh();
+}
+
 //------- UI should keep track of the current for all the controls for answering the query from Doc ---------
 //-------------------------------------------------------------
 // Sets the type of brush to use to the one chosen in the brush 
@@ -1004,8 +1010,9 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback*)ImpressionistUI::cb_brushes },
 		{ "&Clear Canvas",	FL_ALT + 'c', (Fl_Callback*)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 
-		{ "&Colors...",		FL_ALT + 'k', (Fl_Callback*)ImpressionistUI::cb_colors },
-		{ "&Paintly...",	FL_ALT + 'p', (Fl_Callback*)ImpressionistUI::cb_paintly, 0, FL_MENU_DIVIDER },
+		{ "&Colors...",					FL_ALT + 'k', (Fl_Callback*)ImpressionistUI::cb_colors },
+		{ "&Paintly...",				FL_ALT + 'p', (Fl_Callback*)ImpressionistUI::cb_paintly, 0 },
+		{ "&Dissolve Another Image",	FL_ALT + 'd', (Fl_Callback*)ImpressionistUI::cb_dissolve, 0, FL_MENU_DIVIDER },
 
 		{ "&Swap...",		FL_ALT + 'w', (Fl_Callback*)ImpressionistUI::cb_swap },
 		{ "&Undo",			FL_ALT + 'z', (Fl_Callback*)ImpressionistUI::cb_undo, 0, FL_MENU_DIVIDER },
