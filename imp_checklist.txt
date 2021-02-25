@@ -1,0 +1,29 @@
+Impressionist Bells and Whistles checklist for grading
+(submit with your project ONLY if you have implemented any of the following B&Ws)
+
+HKUST login(s): kylawah, ptwongaa
+
+Delete yes/no when appropriate
+
+W per new brush						yes (6)
+W border clipping					yes
+W (red) marker						yes
+W swap							yes
+B RGB scale						yes
+B blur/sharp brush					yes/no
+B 1 level undo						yes
+B dissolve						yes
+BW fade in/out input on output canvas			yes/no
+BW mural (blending)					yes/no
+BW alpha brush						yes/no
+BW automatic paint whole image				yes
+BW gradient from user-specified image			yes
+BW edge clipping					yes
+2B user-specified kernel				yes/no
+2B edge detection + user-specified edge clipping	yes
+2B multiresolution					yes/no
+2B warp brush						yes/no
+2B curved brush following image gradient		yes/no
+4B mosaic						yes/no
+4B impressionist video with temporal coherency		yes/no
+8B Bayesian matting					yes/no
