@@ -364,6 +364,12 @@ void ImpressionistUI::cb_about(Fl_Menu_* o, void* v)
 	fl_message("Impressionist FLTK version for CS341, Spring 2002");
 }
 
+void ImpressionistUI::cb_dissolve(Fl_Menu_* o, void* v)
+{
+	whoami(o)->m_paintView->setDissolve(true);
+	whoami(o)->m_paintView->refresh();
+}
+
 //------- UI should keep track of the current for all the controls for answering the query from Doc ---------
 //-------------------------------------------------------------
 // Sets the type of brush to use to the one chosen in the brush 
@@ -380,20 +386,32 @@ void ImpressionistUI::cb_brushChoice(Fl_Widget* o, void* v)
 	pDoc->setBrushType(type);
 
 	// Enable/disable certain options whenever appropriate
-	if ((type == BRUSH_LINES) || (type == BRUSH_SCATTERED_LINES)) {
+	if ((type == BRUSH_LINES) || (type == BRUSH_SCATTERED_LINES) || (type == BRUSH_CRESCENTS) || (type == BRUSH_SCATTERED_CRESCENTS)) {
 		pUI->m_StrokeDirectionTypeChoice->activate();
 		pUI->m_LineWidthSlider->activate();
 		pUI->m_LineAngleSlider->activate();
-		pUI->m_EdgeClippingButton->activate();
 		pUI->m_AnotherGradientButton->activate();
+
+		if ((type == BRUSH_CRESCENTS) || (type == BRUSH_SCATTERED_CRESCENTS)) {
+			pUI->m_LineWidthSlider->deactivate();
+		}
 	}
 	else {
 		pUI->m_StrokeDirectionTypeChoice->deactivate();
 		pUI->m_LineWidthSlider->deactivate();
 		pUI->m_LineAngleSlider->deactivate();
-		pUI->m_EdgeClippingButton->deactivate();
 		pUI->m_AnotherGradientButton->deactivate();
 	}
+
+
+	if (type != BRUSH_SCATTERED_POINTS) {
+		pUI->m_EdgeClippingButton->activate();
+	}
+	else {
+		pUI->m_EdgeClippingButton->deactivate();
+	}
+	
+	
 }
 
 //-------------------------------------------------------------
@@ -574,7 +592,7 @@ void ImpressionistUI::cb_edge_clipping_button(Fl_Widget* o, void* v) {
 //	pushed
 //------------------------------------------------------------
 void ImpressionistUI::cb_another_gradient_button(Fl_Widget* o, void* v) {
-	((ImpressionistUI*)(o->user_data()))->m_lAnother = bool(((Fl_Slider*)o)->value());
+	((ImpressionistUI*)(o->user_data()))->m_lAnother = bool(((Fl_Button*)o)->value());
 }
 
 //------------------------------------------------------------
@@ -582,7 +600,7 @@ void ImpressionistUI::cb_another_gradient_button(Fl_Widget* o, void* v) {
 //	Called by the UI when the size random button is pushed
 //------------------------------------------------------------
 void ImpressionistUI::cb_size_random_button(Fl_Widget* o, void* v) {
-	((ImpressionistUI*)(o->user_data()))->m_rSizeRandom = bool(((Fl_Slider*)o)->value());
+	((ImpressionistUI*)(o->user_data()))->m_rSizeRandom = bool(((Fl_Button*)o)->value());
 }
 
 //------------------------------------------------------------
@@ -591,6 +609,8 @@ void ImpressionistUI::cb_size_random_button(Fl_Widget* o, void* v) {
 //------------------------------------------------------------
 void ImpressionistUI::cb_paint_button(Fl_Widget* o, void* v) {
 	//	TODO
+	((ImpressionistUI*)(o->user_data()))->m_paintView->setAutoPaint(true);
+	((ImpressionistUI*)(o->user_data()))->m_paintView->refresh();
 }
 
 //------------------------------------------------------------
@@ -603,7 +623,7 @@ void ImpressionistUI::cb_do_it_button(Fl_Widget* o, void* v) {
 
 	if (pDoc->m_ucEdge) delete[] pDoc->m_ucEdge;
 
-	pDoc->getEdge(pDoc->g_ucOrig);
+	pDoc->m_ucEdge = pDoc->getEdge(pDoc->g_ucOrig);
 	pUI->m_origView->refresh();
 }
 
@@ -915,12 +935,32 @@ int ImpressionistUI::getThreshold()
 	return m_eThreshold;
 }
 
+int ImpressionistUI::getSpacing()
+{
+	return m_rSpacing;
+}
+
 //------------------------------------------------
 // Return the brush alpha value
 //------------------------------------------------
 double ImpressionistUI::getAlpha()
 {
 	return m_nAlpha;
+}
+
+double ImpressionistUI::getColorR()
+{
+	return m_nColorR;;
+}
+
+double ImpressionistUI::getColorG()
+{
+	return m_nColorG;
+}
+
+double ImpressionistUI::getColorB()
+{
+	return m_nColorB;
 }
 
 //------------------------------------------------
@@ -930,6 +970,16 @@ double ImpressionistUI::getAlpha()
 bool ImpressionistUI::getClip()
 {
 	return m_lClip;
+}
+
+bool ImpressionistUI::getAnotherGradient()
+{
+	return m_lAnother;
+}
+
+bool ImpressionistUI::getSizeRandom()
+{
+	return m_rSizeRandom;
 }
 
 //------------------------------------------------
@@ -965,8 +1015,9 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 		{ "&Brushes...",	FL_ALT + 'b', (Fl_Callback*)ImpressionistUI::cb_brushes },
 		{ "&Clear Canvas",	FL_ALT + 'c', (Fl_Callback*)ImpressionistUI::cb_clear_canvas, 0, FL_MENU_DIVIDER },
 
-		{ "&Colors...",		FL_ALT + 'k', (Fl_Callback*)ImpressionistUI::cb_colors },
-		{ "&Paintly...",	FL_ALT + 'p', (Fl_Callback*)ImpressionistUI::cb_paintly, 0, FL_MENU_DIVIDER },
+		{ "&Colors...",					FL_ALT + 'k', (Fl_Callback*)ImpressionistUI::cb_colors },
+		{ "&Paintly...",				FL_ALT + 'p', (Fl_Callback*)ImpressionistUI::cb_paintly, 0 },
+		{ "&Dissolve Another Image",	FL_ALT + 'd', (Fl_Callback*)ImpressionistUI::cb_dissolve, 0, FL_MENU_DIVIDER },
 
 		{ "&Swap...",		FL_ALT + 'w', (Fl_Callback*)ImpressionistUI::cb_swap },
 		{ "&Undo",			FL_ALT + 'z', (Fl_Callback*)ImpressionistUI::cb_undo, 0, FL_MENU_DIVIDER },
@@ -998,12 +1049,14 @@ Fl_Menu_Item ImpressionistUI::menuitems[] = {
 
 // Brush choice menu definition
 Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
-  {"Points",			FL_ALT+'p', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_POINTS},
-  {"Lines",				FL_ALT+'l', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_LINES},
-  {"Circles",			FL_ALT+'c', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_CIRCLES},
-  {"Scattered Points",	FL_ALT+'q', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_POINTS},
-  {"Scattered Lines",	FL_ALT+'m', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_LINES},
-  {"Scattered Circles",	FL_ALT+'d', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_CIRCLES},
+  {"Points",				FL_ALT + 'p', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_POINTS},
+  {"Lines",					FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_LINES},
+  {"Circles",				FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_CIRCLES},
+  {"Crescent",				FL_ALT + 'r', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_CRESCENTS},
+  {"Scattered Points",		FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_POINTS},
+  {"Scattered Lines",		FL_ALT + 'm', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_LINES},
+  {"Scattered Circles",		FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_CIRCLES},
+  {"Scattered Crescents",	FL_ALT + 'a', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SCATTERED_CRESCENTS},
   {0}
 };
 
@@ -1077,7 +1130,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_nColorG = 1.00;
 	m_nColorB = 1.00;
 	m_nAlpha = 1.00;
-	m_lClip = true;
+	m_lClip = false;
 	m_lAnother = false;
 	m_rSizeRandom = true;
 	m_FilterKernelNormalize = false;
@@ -1180,7 +1233,6 @@ ImpressionistUI::ImpressionistUI() {
 		m_EdgeClippingButton->value(m_lClip);
 		m_EdgeClippingButton->user_data((void*)(this));	// record self to be used by static callback functions
 		m_EdgeClippingButton->callback(cb_edge_clipping_button);
-		m_EdgeClippingButton->deactivate();
 
 		// Add another gradient button to the dialog
 		m_AnotherGradientButton = new Fl_Light_Button(240, 200, 150, 25, "&Another Gradient");

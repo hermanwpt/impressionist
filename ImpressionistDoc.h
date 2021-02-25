@@ -66,8 +66,14 @@ public:
 	int		getThreshold();
 	int		getStrokeDirectionType();
 	int		getBrushType();
+	int		getSpacing();
 	double	getAlpha();
+	double	getColorR();
+	double	getColorG();
+	double	getColorB();
 	bool	getClip();
+	bool	getAnotherGradient();
+	bool	getSizeRandom();
 	void	setSize(int size);					// set the UI size
 	char*	getImageName();						// get the current image name
 	
@@ -89,6 +95,7 @@ public:
 	unsigned char*  m_ucLastPaint;
 
 	intPair**		g_ucOrig;
+	intPair**		g_ucAnother;
 	BFSVertex**		e_ucEdge;	// Stores the edge image, but in 2D array form, updates when getEdge() is called
 
 	// The current active brush.

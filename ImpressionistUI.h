@@ -98,8 +98,14 @@ public:
 	int					getWidth();
 	int					getAngle();
 	int					getThreshold();
+	int					getSpacing();
 	double				getAlpha();
+	double				getColorR();
+	double				getColorG();
+	double				getColorB();
 	bool				getClip();
+	bool				getAnotherGradient();
+	bool				getSizeRandom();
 	void				setSize(int size);
 	void				setAngle(int angle);
 	std::vector<std::vector<double>> getCustomizedFilterKernel();
@@ -181,6 +187,7 @@ private:
 	static void cb_faster(Fl_Menu_* o, void* v);
 	static void cb_safer(Fl_Menu_* o, void* v);
 	static void	cb_about(Fl_Menu_* o, void* v);
+	static void cb_dissolve(Fl_Menu_* o, void* v);
 
 	static void	cb_brushChoice(Fl_Widget* o, void* v);
 	static void cb_strokeDirectionTypeChoice(Fl_Widget* o, void* v);

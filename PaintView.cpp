@@ -13,7 +13,7 @@
 #include "LineBrush.h"
 #include <math.h>
 #include <vector>
-
+#include <algorithm>
 
 #define LEFT_MOUSE_DOWN		1
 #define LEFT_MOUSE_DRAG		2
@@ -32,6 +32,8 @@ static int		eventToDo;
 static int		isAnEvent=0;
 static Point	coord;
 
+extern float frand();
+
 PaintView::PaintView(int			x, 
 					 int			y, 
 					 int			w, 
@@ -39,6 +41,8 @@ PaintView::PaintView(int			x,
 					 const char*	l)
 						: Fl_Gl_Window(x,y,w,h,l)
 {
+	m_nAuto = false;
+	m_nDissolve = false;
 	m_nWindowWidth	= w;
 	m_nWindowHeight	= h;
 
@@ -69,7 +73,6 @@ void PaintView::draw()
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 	
-
 	// Enable alpha blending
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -125,12 +128,46 @@ void PaintView::draw()
 	glStencilOp(GL_KEEP, GL_KEEP, GL_KEEP);				// Force OpenGL to not draw to stencil buffer at all
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 
+
+	// Handles Autopaint event
+	if (m_pDoc->m_ucPainting && (m_nAuto || m_nDissolve)) {
+		int spacing = m_pDoc->getSpacing();
+		int origSize = m_pDoc->m_pUI->getSize();
+		bool randSize = m_pDoc->getSizeRandom();
+		std::vector<int> xCoors, yCoors;
+		for (int i = 0; i < m_nDrawWidth; i += spacing) {
+			xCoors.push_back(i);
+		}
+		for (int i = 0; i < m_nDrawHeight; i += spacing) {
+			yCoors.push_back(i);
+		}
+		std::random_shuffle(xCoors.begin(), xCoors.end());
+		std::random_shuffle(yCoors.begin(), yCoors.end());
+
+		for (int i = 0; i < xCoors.size(); ++i) {
+			for (int j = 0; j < yCoors.size(); ++j) {
+				if (randSize) {
+					m_pDoc->m_pUI->setSize(origSize * (frand() + 0.5));
+				}
+				m_pDoc->m_pCurrentBrush->BrushMove(Point(xCoors[i] + m_nStartCol, m_nEndRow - yCoors[j]), Point(xCoors[i], m_nWindowHeight - yCoors[j]));
+			}
+		}
+
+		m_pDoc->m_pUI->setSize(origSize);
+		m_nAuto = false;
+		m_nDissolve = false;
+		SaveCurrentContent();
+		RestoreContent();
+	}
+
+	// Handles when no painting is occuring
 	if ( m_pDoc->m_ucPainting && !isAnEvent) 
 	{
 		RestoreContent();
 
 	}
 
+	// Handles normal painting events
 	if ( m_pDoc->m_ucPainting && isAnEvent) 
 	{
 
@@ -324,6 +361,22 @@ void PaintView::RestoreContent()
 				  m_pPaintBitstart);
 
 //	glDrawBuffer(GL_FRONT);
+}
+
+
+void PaintView::setAutoPaint(bool flag)
+{
+	m_nAuto = flag;
+}
+
+void PaintView::setDissolve(bool flag)
+{
+	m_nDissolve = flag;
+}
+
+bool PaintView::getDissolve()
+{
+	return m_nDissolve;
 }
 
 void PaintView::applyFilterKernel(std::vector<std::vector<double>> fk, bool normalized) {

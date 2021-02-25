@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Bitmap.cpp" />
+    <ClCompile Include="CrescentBrush.cpp" />
     <ClCompile Include="ImpBrush.cpp" />
     <ClCompile Include="Impressionist.cpp" />
     <ClCompile Include="ImpressionistDoc.cpp" />
@@ -149,6 +150,7 @@
     <ClCompile Include="PointBrush.cpp" />
     <ClCompile Include="LineBrush.cpp" />
     <ClCompile Include="CircleBrush.cpp" />
+    <ClCompile Include="ScatteredCrescentBrush.cpp" />
     <ClCompile Include="ScatteredPointBrush.cpp" />
     <ClCompile Include="ScatteredLineBrush.cpp" />
     <ClCompile Include="ScatteredCircleBrush.cpp" />
@@ -156,6 +158,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bitmap.h" />
+    <ClInclude Include="CrescentBrush.h" />
+    <ClInclude Include="ScatteredCrescentBrush.h" />
     <ClInclude Include="ImpBrush.h" />
     <ClInclude Include="Impressionist.h" />
     <ClInclude Include="ImpressionistDoc.h" />

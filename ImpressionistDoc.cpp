@@ -16,9 +16,11 @@
 #include "PointBrush.h"
 #include "LineBrush.h"
 #include "CircleBrush.h"
+#include "CrescentBrush.h"
 #include "ScatteredPointBrush.h"
 #include "ScatteredLineBrush.h"
 #include "ScatteredCircleBrush.h"
+#include "ScatteredCrescentBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -37,6 +39,7 @@ ImpressionistDoc::ImpressionistDoc()
 	m_ucLastPaint	= NULL;
 
 	g_ucOrig		= NULL;
+	g_ucAnother		= NULL;
 	e_ucEdge		= NULL;
 
 	m_pCurrentBrushType = BRUSH_POINTS;
@@ -54,12 +57,16 @@ ImpressionistDoc::ImpressionistDoc()
 		= new LineBrush( this, "Lines" );
 	ImpBrush::c_pBrushes[BRUSH_CIRCLES]				
 		= new CircleBrush( this, "Circles" );
+	ImpBrush::c_pBrushes[BRUSH_CRESCENTS]
+		= new CrescentBrush(this, "Crescent");
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_POINTS]	
 		= new ScatteredPointBrush( this, "Scattered Points" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES]		
 		= new ScatteredLineBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CRESCENTS]
+		= new ScatteredCrescentBrush(this, "Scattered Crescents");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -168,6 +175,11 @@ int ImpressionistDoc::getBrushType()
 	return m_pCurrentBrushType;
 }
 
+int ImpressionistDoc::getSpacing()
+{
+	return m_pUI->getSpacing();
+}
+
 //---------------------------------------------------------
 // Returns the alpha value of the brush.
 //---------------------------------------------------------
@@ -176,11 +188,36 @@ double ImpressionistDoc::getAlpha()
 	return m_pUI->getAlpha();
 }
 
+double ImpressionistDoc::getColorR()
+{
+	return m_pUI->getColorR();
+}
+
+double ImpressionistDoc::getColorG()
+{
+	return m_pUI->getColorG();
+}
+
+double ImpressionistDoc::getColorB()
+{
+	return m_pUI->getColorB();
+}
+
 //---------------------------------------------------------
 // Returns whether edge clipping is turned on
 //---------------------------------------------------------
 bool ImpressionistDoc::getClip() {
 	return m_pUI->getClip();
+}
+
+bool ImpressionistDoc::getAnotherGradient()
+{
+	return m_pUI->getAnotherGradient();
+}
+
+bool ImpressionistDoc::getSizeRandom()
+{
+	return m_pUI->getSizeRandom();
 }
 
 //---------------------------------------------------------
@@ -211,6 +248,13 @@ int ImpressionistDoc::loadImage(char *iname)
 		delete[] g_ucOrig;
 	}
 	g_ucOrig = NULL;
+	if (g_ucAnother) {
+		for (int i = 0; i < m_nWidth; ++i) {
+			delete[] g_ucAnother[i];
+		}
+		delete[] g_ucAnother;
+	}
+	g_ucAnother = NULL;
 
 	// reflect the fact of loading the new image
 	m_nWidth		= width;
@@ -221,7 +265,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	// release old storage
 	if (m_ucPainting) delete[] m_ucPainting; 
 	if (m_ucOrig) delete[] m_ucOrig; 
-	if (m_ucEdge) delete[] m_ucEdge; m_ucEdge = NULL;
+	if (m_ucEdge) delete[] m_ucEdge;
 	if (m_ucAnother) delete[] m_ucAnother; 
 	if (m_ucLastPaint) delete[] m_ucLastPaint;
 	e_ucEdge = NULL;
@@ -230,6 +274,7 @@ int ImpressionistDoc::loadImage(char *iname)
 	m_ucBitmap		= m_ucOrig;
 
 	g_ucOrig		= getGradient();
+	g_ucAnother		= getGradient();
 	m_ucEdge		= getEdge(g_ucOrig);	//	TODO: Replace with a function that generates an edge image of data
 	m_ucAnother		= another_data;
 	
@@ -267,6 +312,8 @@ int ImpressionistDoc::loadOtherImage(char *iname, bool mode) {
 	//	Try to open the image to read
 	unsigned char* data;
 	int	width, height;
+	bool edgeFlag = false;
+	bool anotherFlag = false;
 
 	if ((data=readBMP(iname, width, height)) == NULL) {
 		fl_alert("Can't load bitmap file");
@@ -279,13 +326,56 @@ int ImpressionistDoc::loadOtherImage(char *iname, bool mode) {
 		return 0;
 	}
 
+	if (m_ucBitmap == m_ucEdge) {
+		edgeFlag = true;
+		m_ucBitmap = NULL;
+	}
+	if (m_ucBitmap == m_ucAnother) {
+		anotherFlag = true;
+		m_ucBitmap = NULL;
+	}
+
 	//	Release old storage and assign new image to variables
 	if (mode) {
 		if (m_ucAnother) delete[] m_ucAnother;
 		m_ucAnother = data;
+		unsigned char* temp = m_ucBitmap;	// Save what the pointer was pointing at
+
+		if (g_ucAnother) {
+			for (int i = 0; i < m_nWidth; ++i) {
+				delete[] g_ucAnother[i];
+			}
+			delete[] g_ucAnother;
+		}
+		m_ucBitmap = m_ucAnother;
+		g_ucAnother = getGradient();
+		m_ucBitmap = temp;
 	} else {
 		if (m_ucEdge) delete[] m_ucEdge;
 		m_ucEdge = data;
+		
+		e_ucEdge = new BFSVertex * [width];
+		for (int i = 0; i < m_nWidth; ++i) {
+			e_ucEdge[i] = new BFSVertex[height];
+		}
+
+		for (int i = 0; i < m_nWidth; ++i) {
+			for (int j = 0; j < m_nHeight; ++j) {
+				int intensity = m_ucEdge[(i + j * width) * 3];
+				if (intensity == 0) {
+					e_ucEdge[i][j] = BFSVertex(i, j, false);
+				} else {
+					e_ucEdge[i][j] = BFSVertex(i, j, true);
+				}
+			}
+		}
+	}
+
+	if (edgeFlag) {
+		m_ucBitmap = m_ucEdge;
+	}
+	if (anotherFlag) {
+		m_ucBitmap = m_ucAnother;
 	}
 
 	return 1;
@@ -338,7 +428,10 @@ int ImpressionistDoc::clearCanvas()
 	if ( m_ucPainting ) 
 	{
 		delete [] m_ucPainting;
-		delete[] m_ucLastPaint;
+		if (m_ucLastPaint) {
+			delete[] m_ucLastPaint;
+			m_ucLastPaint = NULL;
+		}
 
 		// allocate space for draw view
 		m_ucPainting	= new unsigned char [m_nPaintWidth*m_nPaintHeight*3];
@@ -422,9 +515,11 @@ intPair** ImpressionistDoc::getGradient() {
 	for (int i = 0; i < m_nWidth; ++i) {
 		for (int j = 0; j < m_nHeight; ++j) {
 			GLubyte color[3];
-			memcpy(color, GetOriginalPixel(i, j), 3);
+			color[0] = m_ucBitmap[(i + j * m_nWidth) * 3];
+			color[1] = m_ucBitmap[(i + j * m_nWidth) * 3 + 1];
+			color[2] = m_ucBitmap[(i + j * m_nWidth) * 3 + 2];
 
-			greyscale[i][j] = color[0]; // (GLubyte)(0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2]);	// From tutorial notes
+			greyscale[i][j] = (GLubyte)(0.299 * color[0] + 0.587 * color[1] + 0.114 * color[2]);	// From tutorial notes
 		}
 	}
 
@@ -523,12 +618,17 @@ intPair** ImpressionistDoc::getGradient() {
 //----------------------------------------------------------------
 unsigned char* ImpressionistDoc::getEdge(intPair** gradient) {
 	// Release storage for old edge image array first
+	bool flag = false;
+	if (m_ucBitmap == m_ucEdge) {
+		flag = true;
+	}
 	if (e_ucEdge) {
 		for (int i = 0; i < m_nWidth; ++i) {
 			delete[] e_ucEdge[i];
 		}
 		delete[] e_ucEdge;
 	}
+	
 
 	e_ucEdge = new BFSVertex* [m_nWidth];
 	for (int i = 0; i < m_nWidth; ++i) {
@@ -558,6 +658,10 @@ unsigned char* ImpressionistDoc::getEdge(intPair** gradient) {
 			}
 			
 		}
+	}
+
+	if (flag) {
+		m_ucBitmap = edgeImage;
 	}
 
 	return edgeImage;
