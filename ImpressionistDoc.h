@@ -10,6 +10,8 @@
 #include "impressionist.h"
 #include "bitmap.h"
 
+#include <vector>
+
 class ImpressionistUI;
 
 class intPair {
@@ -47,7 +49,7 @@ public:
 
 	int		loadImage(char *iname);						// called by the UI to load image
 	int		loadOtherImage(char* iname, bool mode);		// called by the UI to load edge/another image
-	int		loadMuralImage(char* iname);				// called by the UI to load mural image
+	int		loadMuralImage(char* iname);				// called by the UI to load mural image										**BONUS
 	int		saveImage(char *iname);						// called by the UI to save image
 
 
@@ -56,9 +58,10 @@ public:
 	void	setStrokeDirectionType(int type);	// called by the UI to set the strokeDirectionType
 	void	setPaintlyStyle(int type);			// called by the UI to set the paintlyStyleType
 	void	setPaintlyStrokeType(int type);		// called by the UI to set the paintlyStrokeType
-	void	undo();								// called by the UI "Undo"
-	void	swap();								// swap origView and paintView
-	void	saveLastPaint();					// save the painting to m_ucLastPaint after every brush
+	void	undo();								// called by the UI "Undo"															**BONUS
+	void	swap();								// swap origView and paintView														**BONUS
+	void	saveLastPaint();					// save the painting to m_ucLastPaint after every brush								**BONUS
+	void	applyFilterKernel(std::vector<std::vector<double>> fk, bool normalized);	// apply customized filter kernel			**BONUS
 
 	int		getSize();							// get the UI size
 	int		getWidth();

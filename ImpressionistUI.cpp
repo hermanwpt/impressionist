@@ -655,6 +655,7 @@ void ImpressionistUI::cb_filterkernelinput(Fl_Widget* o, void* v) {
 
 void ImpressionistUI::cb_filterkernelapply(Fl_Widget* o, void* v) {
 	ImpressionistUI* pUI = (ImpressionistUI*)(o->user_data());
+	ImpressionistDoc* pDoc = pUI->m_pDoc;
 
 	pUI->m_customizedFilterKernel.clear();
 	if ((pUI->m_FilterKernelSize != nullptr) && (pUI->m_FilterKernelSize[0] == '\0') || (pUI->m_FilterKernelText != nullptr) && (pUI->m_FilterKernelText[0] == '\0')) { // boundary case
@@ -672,7 +673,7 @@ void ImpressionistUI::cb_filterkernelapply(Fl_Widget* o, void* v) {
 		}
 		pUI->m_customizedFilterKernel.push_back(x);
 	}
-	pUI->m_paintView->applyFilterKernel(pUI->m_customizedFilterKernel, pUI->m_FilterKernelNormalize);
+	pDoc->applyFilterKernel(pUI->m_customizedFilterKernel, pUI->m_FilterKernelNormalize);
 }
 
 void ImpressionistUI::cb_filterkernelnormalize(Fl_Widget* o, void* v) {
