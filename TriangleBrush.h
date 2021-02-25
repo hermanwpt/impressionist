@@ -1,17 +1,17 @@
 //
-// CrescentBrush.h
+// TriangleBrush.h
 //
-// The header file for Crescent Brush. 
+// The header file for Triangle Brush. 
 //
 
-#ifndef CRESCENTBRUSH_H
-#define CRESCENTBRUSH_H
+#ifndef TRIANGLEBRUSH_H
+#define TRIANGLEBRUSH_H
 
 #include "ImpBrush.h"
 
-class CrescentBrush : public ImpBrush {
+class TriangleBrush : public ImpBrush {
 public:
-	CrescentBrush(ImpressionistDoc* pDoc = NULL, char* name = NULL);
+	TriangleBrush(ImpressionistDoc* pDoc = NULL, char* name = NULL);
 
 	void BrushBegin(const Point source, const Point target);
 	void BrushMove(const Point source, const Point target);

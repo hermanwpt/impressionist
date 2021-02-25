@@ -17,10 +17,14 @@
 #include "LineBrush.h"
 #include "CircleBrush.h"
 #include "CrescentBrush.h"
+#include "TriangleBrush.h"
+#include "SpiralBrush.h"
 #include "ScatteredPointBrush.h"
 #include "ScatteredLineBrush.h"
 #include "ScatteredCircleBrush.h"
 #include "ScatteredCrescentBrush.h"
+#include "ScatteredTriangleBrush.h"
+#include "ScatteredSpiralBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -59,6 +63,10 @@ ImpressionistDoc::ImpressionistDoc()
 		= new CircleBrush( this, "Circles" );
 	ImpBrush::c_pBrushes[BRUSH_CRESCENTS]
 		= new CrescentBrush(this, "Crescent");
+	ImpBrush::c_pBrushes[BRUSH_TRIANGLES]
+		= new TriangleBrush(this, "Triangle");
+	ImpBrush::c_pBrushes[BRUSH_SPIRALS]
+		= new SpiralBrush(this, "Spiral");
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_POINTS]	
 		= new ScatteredPointBrush( this, "Scattered Points" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES]		
@@ -67,6 +75,10 @@ ImpressionistDoc::ImpressionistDoc()
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CRESCENTS]
 		= new ScatteredCrescentBrush(this, "Scattered Crescents");
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_TRIANGLES]
+		= new ScatteredTriangleBrush(this, "Scattered Triangles");
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_SPIRALS]
+		= new ScatteredSpiralBrush(this, "Scattered Spirals");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];

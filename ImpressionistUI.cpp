@@ -386,13 +386,16 @@ void ImpressionistUI::cb_brushChoice(Fl_Widget* o, void* v)
 	pDoc->setBrushType(type);
 
 	// Enable/disable certain options whenever appropriate
-	if ((type == BRUSH_LINES) || (type == BRUSH_SCATTERED_LINES) || (type == BRUSH_CRESCENTS) || (type == BRUSH_SCATTERED_CRESCENTS)) {
+	if ((type == BRUSH_LINES) || (type == BRUSH_SCATTERED_LINES)
+		|| (type == BRUSH_CRESCENTS) || (type == BRUSH_SCATTERED_CRESCENTS)
+		|| (type == BRUSH_TRIANGLES) || (type == BRUSH_SCATTERED_TRIANGLES)) {
 		pUI->m_StrokeDirectionTypeChoice->activate();
 		pUI->m_LineWidthSlider->activate();
 		pUI->m_LineAngleSlider->activate();
 		pUI->m_AnotherGradientButton->activate();
 
-		if ((type == BRUSH_CRESCENTS) || (type == BRUSH_SCATTERED_CRESCENTS)) {
+		if ((type == BRUSH_CRESCENTS) || (type == BRUSH_SCATTERED_CRESCENTS)
+			|| (type == BRUSH_TRIANGLES) || (type == BRUSH_SCATTERED_TRIANGLES)) {
 			pUI->m_LineWidthSlider->deactivate();
 		}
 	}
@@ -1052,11 +1055,15 @@ Fl_Menu_Item ImpressionistUI::brushTypeMenu[NUM_BRUSH_TYPE+1] = {
   {"Points",				FL_ALT + 'p', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_POINTS},
   {"Lines",					FL_ALT + 'l', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_LINES},
   {"Circles",				FL_ALT + 'c', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_CIRCLES},
-  {"Crescent",				FL_ALT + 'r', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_CRESCENTS},
+  {"Crescents",				FL_ALT + 'r', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_CRESCENTS},
+  {"Triangles",				FL_ALT + 't', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_TRIANGLES},
+  {"Spirals",				FL_ALT + 's', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SPIRALS},
   {"Scattered Points",		FL_ALT + 'q', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_POINTS},
   {"Scattered Lines",		FL_ALT + 'm', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_LINES},
   {"Scattered Circles",		FL_ALT + 'd', (Fl_Callback *)ImpressionistUI::cb_brushChoice, (void *)BRUSH_SCATTERED_CIRCLES},
   {"Scattered Crescents",	FL_ALT + 'a', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SCATTERED_CRESCENTS},
+  {"Scattered Triangles",	FL_ALT + 'i', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SCATTERED_TRIANGLES},
+  {"Scatttered Spirals",	FL_ALT + 'g', (Fl_Callback*)ImpressionistUI::cb_brushChoice, (void*)BRUSH_SCATTERED_SPIRALS},
   {0}
 };
 
