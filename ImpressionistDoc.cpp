@@ -16,9 +16,11 @@
 #include "PointBrush.h"
 #include "LineBrush.h"
 #include "CircleBrush.h"
+#include "CrescentBrush.h"
 #include "ScatteredPointBrush.h"
 #include "ScatteredLineBrush.h"
 #include "ScatteredCircleBrush.h"
+#include "ScatteredCrescentBrush.h"
 
 
 #define DESTROY(p)	{  if ((p)!=NULL) {delete [] p; p=NULL; } }
@@ -55,12 +57,16 @@ ImpressionistDoc::ImpressionistDoc()
 		= new LineBrush( this, "Lines" );
 	ImpBrush::c_pBrushes[BRUSH_CIRCLES]				
 		= new CircleBrush( this, "Circles" );
+	ImpBrush::c_pBrushes[BRUSH_CRESCENTS]
+		= new CrescentBrush(this, "Crescent");
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_POINTS]	
 		= new ScatteredPointBrush( this, "Scattered Points" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_LINES]		
 		= new ScatteredLineBrush( this, "Scattered Lines" );
 	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CIRCLES]	
 		= new ScatteredCircleBrush( this, "Scattered Circles" );
+	ImpBrush::c_pBrushes[BRUSH_SCATTERED_CRESCENTS]
+		= new ScatteredCrescentBrush(this, "Scattered Crescents");
 
 	// make one of the brushes current
 	m_pCurrentBrush	= ImpBrush::c_pBrushes[0];
@@ -422,7 +428,10 @@ int ImpressionistDoc::clearCanvas()
 	if ( m_ucPainting ) 
 	{
 		delete [] m_ucPainting;
-		if (m_ucLastPaint) delete[] m_ucLastPaint;
+		if (m_ucLastPaint) {
+			delete[] m_ucLastPaint;
+			m_ucLastPaint = NULL;
+		}
 
 		// allocate space for draw view
 		m_ucPainting	= new unsigned char [m_nPaintWidth*m_nPaintHeight*3];

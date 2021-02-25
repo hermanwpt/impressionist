@@ -159,37 +159,6 @@ void PaintView::draw()
 		SaveCurrentContent();
 		RestoreContent();
 	}
-	/*
-	// Handles dissolve event
-	if (m_pDoc->m_ucPainting && m_nDissolve) {
-		int spacing = m_pDoc->getSpacing();
-		int origSize = m_pDoc->m_pUI->getSize();
-		bool randSize = m_pDoc->getSizeRandom();
-		std::vector<int> xCoors, yCoors;
-		for (int i = 0; i < m_nDrawWidth; i += spacing) {
-			xCoors.push_back(i);
-		}
-		for (int i = 0; i < m_nDrawHeight; i += spacing) {
-			yCoors.push_back(i);
-		}
-		std::random_shuffle(xCoors.begin(), xCoors.end());
-		std::random_shuffle(yCoors.begin(), yCoors.end());
-
-		for (int i = 0; i < xCoors.size(); ++i) {
-			for (int j = 0; j < yCoors.size(); ++j) {
-				if (randSize) {
-					m_pDoc->m_pUI->setSize(origSize * (frand() + 0.5));
-				}
-				m_pDoc->m_pCurrentBrush->BrushMove(Point(xCoors[i] + m_nStartCol, m_nEndRow - yCoors[j]), Point(xCoors[i], m_nWindowHeight - yCoors[j]));
-			}
-		}
-
-		m_pDoc->m_pUI->setSize(origSize);
-		m_nDissolve = false;
-		SaveCurrentContent();
-		RestoreContent();
-	}
-	*/
 
 	// Handles when no painting is occuring
 	if ( m_pDoc->m_ucPainting && !isAnEvent) 
