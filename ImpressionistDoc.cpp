@@ -475,14 +475,14 @@ int ImpressionistDoc::clearCanvas()
 // save the painting to m_ucLastPaint after every brush
 //------------------------------------------------------------------
 void ImpressionistDoc::saveLastPaint() {
-	memcpy(m_ucLastPaint, m_ucPainting, m_nWidth * m_nHeight * 3 * sizeof(unsigned char));
+	memcpy(m_ucLastPaint, m_ucPainting, m_nWidth * m_nHeight * 3);
 }
 
 //------------------------------------------------------------------
 // undo the last brush
 //------------------------------------------------------------------
 void ImpressionistDoc::undo() {
-	memcpy(m_ucPainting, m_ucLastPaint, m_nWidth * m_nHeight * 3 * sizeof(unsigned char));
+	memcpy(m_ucPainting, m_ucLastPaint, m_nWidth * m_nHeight * 3);
 	m_pUI->m_paintView->refresh();
 }
 
