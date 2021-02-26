@@ -673,7 +673,7 @@ void ImpressionistUI::cb_filterkernelapply(Fl_Widget* o, void* v) {
 		}
 		pUI->m_customizedFilterKernel.push_back(x);
 	}
-	pDoc->applyFilterKernel(pUI->m_customizedFilterKernel, pUI->m_FilterKernelNormalize);
+	pDoc->customizedImageConvolution(pUI->m_customizedFilterKernel, pUI->m_FilterKernelNormalize);
 }
 
 void ImpressionistUI::cb_filterkernelnormalize(Fl_Widget* o, void* v) {

@@ -36,9 +36,6 @@ public:
 	void setDissolve(bool flag);
 	bool getDissolve();
 
-	void applyFilterKernel(std::vector<std::vector<double>> fk, bool normalized);
-
-
 	ImpressionistDoc *m_pDoc;
 
 private:

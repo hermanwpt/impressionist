@@ -61,7 +61,7 @@ public:
 	void	undo();								// called by the UI "Undo"															**BONUS
 	void	swap();								// swap origView and paintView														**BONUS
 	void	saveLastPaint();					// save the painting to m_ucLastPaint after every brush								**BONUS
-	void	applyFilterKernel(std::vector<std::vector<double>> fk, bool normalized);	// apply customized filter kernel			**BONUS
+	void	customizedImageConvolution(std::vector<std::vector<double>> fk, bool normalized);	// apply customized filter kernel	**BONUS
 
 	int		getSize();							// get the UI size
 	int		getWidth();

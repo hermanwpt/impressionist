@@ -498,7 +498,10 @@ void ImpressionistDoc::swap() {
 	m_pUI->m_paintView->refresh();
 }
 
-void ImpressionistDoc::applyFilterKernel(std::vector<std::vector<double>> fk, bool normalized) {
+//------------------------------------------------------------------
+// Customised Image Convolution (customized filter kernel bonus)
+//------------------------------------------------------------------
+void ImpressionistDoc::customizedImageConvolution(std::vector<std::vector<double>> fk, bool normalized) {
 	int sum = 0;
 	for (int i = 0; i < fk.size(); i++)
 		for (int j = 0; j < fk.size(); j++)
@@ -516,18 +519,25 @@ void ImpressionistDoc::applyFilterKernel(std::vector<std::vector<double>> fk, bo
 		for (int i = 0; i < width; i++) {
 			for (int j = 0; j < height; j++) {
 				int newImgPx = 0;
+				bool isBorder = false;
 				for (int x = 0; x < filterSize; x++) {
 					for (int y = 0; y < filterSize; y++) {
 						int pixelX = i - (filterSize) / 2 + x;
 						int pixelY = j - (filterSize) / 2 + y;
 						if (pixelX < 0 || pixelX > width - 1 || pixelY < 0 || pixelY > height - 1) {
+							isBorder = true;
 							continue;
 						}
 						newImgPx += fk[x][y] * oldImage[(pixelY * width + pixelX) * 3 + rgb];
 					}
 				}
-				if (normalized)
+				if (isBorder) {
+					newImage[(width * j + i) * 3 + rgb] = 0;
+					continue;
+				}
+				if (normalized) {
 					newImgPx = newImgPx / sum;
+				}
 				newImage[(width * j + i) * 3 + rgb] = newImgPx;
 			}
 		}

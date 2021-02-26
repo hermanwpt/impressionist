@@ -112,15 +112,21 @@ void CustomBrush::applyFilter(int x, int y) {
 	
 	for (int rgb = 0; rgb < 3; rgb++) {
 		int px = 0;
+		bool isBorder = false;
 		for (int i = 0; i < filterSize; i++) {
 			for (int j = 0; j < filterSize; j++) {
 				int pixelX = x - filterSize / 2 + i;
 				int pixelY = y - filterSize / 2 + j;
 				if (pixelX < 0 || pixelX > width - 1 || pixelY < 0 || pixelY > height - 1) {
+					isBorder = true;
 					continue;
 				}
 				px += filter[i][j] * img[(pixelY * width + pixelX) * 3 + rgb];
 			}
+		}
+		if (isBorder) {
+			pDoc->m_ucPainting[(y * width + x) * 3 + rgb] = 0;
+			continue;
 		}
 		pDoc->m_ucPainting[(y * width + x) * 3 + rgb] = min(255, max(0, px));
 	}
