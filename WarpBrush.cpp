@@ -39,10 +39,32 @@ void WarpBrush::BrushBegin(const Point source, const Point target) {
 
 void WarpBrush::BrushMove(const Point source, const Point target) {
 	ImpressionistDoc* pDoc = GetDocument();
+	ImpressionistUI* dlg = pDoc->m_pUI;
+
+	if (pDoc == NULL) {
+		printf("CustomBrush::BrushMove  document is NULL\n");
+		return;
+	}
+
+	int width = pDoc->m_nPaintWidth;
+	int height = pDoc->m_nPaintHeight;
+
+	int x = source.x;
+	int y = source.y;
+	if (x < 0) {
+		x = 0;
+	}
+	else if (x > width - 1) {
+		x = width - 1;
+	}
+	if (y < 0) {
+		y = 0;
+	}
+	else if (y > height - 1) {
+		y = height - 1;
+	}
 
 	int size = pDoc->getSize();
-	int width = pDoc->m_nWidth;
-	int height = pDoc->m_nHeight;
 
 	// keep record of the oldImg
 	unsigned char* img = new unsigned char[width * height * 3];
@@ -50,17 +72,15 @@ void WarpBrush::BrushMove(const Point source, const Point target) {
 
 	vector<vector<double>> filter = getGaussianFilter(size);
 
-	Point des{ target.x, target.y };
+	Point des{ source.x, source.y };
 
 	double displacementX = static_cast<double>(des.x) - src.x;
 	double displacementY = static_cast<double>(des.y) - src.y;
 
 	glPointSize((float)1);
 	glBegin(GL_POINTS);
-	for (int x = src.x - size / 2; x < src.x + size / 2; x++) {
-		int i = 0;
-		for (int y = src.y - size / 2; y < src.y + size / 2; y++) {
-			int j = 0;
+	for (int x = src.x - size / 2, i = 0; x < src.x + size / 2; x++, i++) {
+		for (int y = src.y - size / 2, j = 0; y < src.y + size / 2; y++, j++) {
 			// check boundary case
 			if (x < 0 || x > width - 1 || y < 0 || y > height - 1) {
 				continue;
@@ -92,9 +112,7 @@ void WarpBrush::BrushMove(const Point source, const Point target) {
 				(float)pDoc->getAlpha()
 			);
 			glVertex2d(x, y);
-			j++;
 		}
-		i++;
 	}
 	glEnd();
 	pDoc->m_pUI->m_paintView->SaveCurrentContent();
