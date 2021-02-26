@@ -42,3 +42,12 @@ BW Automatic paint whole image
 		  - Another image: ON
 		  - Spacing: 1
 		  - Size rand.: OFF
+
+2B user-specified kernel
+- Input: Input kernel in row major order with each element separated by a " ". Input the size of the kernel.
+- Example of inputting kernel {	{1, 2, 3},
+								{4, 5, 6},
+								{7, 8, 9} }
+  Input					Input				Input					Input
+  1 2 3 4 5 6 7 8 9		3					Check Normalized Box	Click Apply Button
+  in the Kernel Box.	in the Size Box.	

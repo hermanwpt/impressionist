@@ -15,7 +15,7 @@ public:
 	WarpBrush(ImpressionistDoc* pDoc = NULL, char* name = NULL);
 
 	vector<vector<double>> getGaussianFilter(int size);
-	GLubyte* applyGaussianFilteratXY(unsigned char* img, int x, int y, const vector<vector<double>>& filter);
+	//GLubyte* applyGaussianFilteratXY(unsigned char* img, int x, int y, const vector<vector<double>>& filter, double diffX, double diffY);
 
 	void BrushBegin(const Point source, const Point target);
 	void BrushMove(const Point source, const Point target);

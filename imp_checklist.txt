@@ -22,7 +22,7 @@ BW edge clipping					yes
 2B user-specified kernel				yes
 2B edge detection + user-specified edge clipping	yes
 2B multiresolution					yes/no
-2B warp brush						yes/no
+2B warp brush						yes
 2B curved brush following image gradient		yes/no
 4B mosaic						yes/no
 4B impressionist video with temporal coherency		yes/no
