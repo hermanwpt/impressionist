@@ -226,7 +226,7 @@ void CrescentBrush::BrushMove(const Point source, const Point target) {
 			double xOffset = radius * cosValues[(i + angle + 290) % NUM_SEGMENTS];
 			double yOffset = radius * sinValues[(i + angle + 290) % NUM_SEGMENTS];
 
-			glVertex2f(source.x + xOffset + xTrans, source.y + yOffset - yTrans);
+			glVertex2f(target.x + xOffset + xTrans, target.y + yOffset - yTrans);
 		}
 	glEnd();
 
