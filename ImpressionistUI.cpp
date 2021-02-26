@@ -1146,7 +1146,7 @@ ImpressionistUI::ImpressionistUI() {
 	m_lClip = false;
 	m_lAnother = false;
 	m_rSizeRandom = true;
-	m_FilterKernelNormalize = false;
+	m_FilterKernelNormalize = true;
 	m_FilterKernelText = new char[255];
 	memset(m_FilterKernelText, 0, 255);
 	m_FilterKernelSize = new char[255];
