@@ -159,8 +159,8 @@ void TriangleBrush::BrushMove(const Point source, const Point target) {
 		break;
 	case STROKE_GRADIENT:
 		// Prevent coordinates from going out of bound
-		x = source.x;
-		y = source.y;
+		x = target.x;
+		y = target.y;
 		if (x < 0) {
 			x = 0;
 		}
@@ -219,9 +219,9 @@ void TriangleBrush::BrushMove(const Point source, const Point target) {
 	
 	glBegin(GL_POLYGON);
 	SetColor(source);
-		glVertex2f(x + size * cosValues[angle], y + size * sinValues[angle]);
-		glVertex2f(x + size * cosValues[(angle + 120) % 360], y + size * sinValues[(angle + 120) % 360]);
-		glVertex2f(x + size * cosValues[(angle + 240) % 360], y + size * sinValues[(angle + 240) % 360]);
+		glVertex2f(target.x + size * cosValues[angle], target.y + size * sinValues[angle]);
+		glVertex2f(target.x + size * cosValues[(angle + 120) % 360], target.y + size * sinValues[(angle + 120) % 360]);
+		glVertex2f(target.x + size * cosValues[(angle + 240) % 360], target.y + size * sinValues[(angle + 240) % 360]);
 	glEnd();
 
 	// Clear previously applied clipping

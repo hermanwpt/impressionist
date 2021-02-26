@@ -159,8 +159,8 @@ void SpiralBrush::BrushMove(const Point source, const Point target) {
 		break;
 	case STROKE_GRADIENT:
 		// Prevent coordinates from going out of bound
-		x = source.x;
-		y = source.y;
+		x = target.x;
+		y = target.y;
 		if (x < 0) {
 			x = 0;
 		}
@@ -223,7 +223,7 @@ void SpiralBrush::BrushMove(const Point source, const Point target) {
 		double xOffset = radius * ((double)i / (NUM_SEGMENTS * 3)) * cosValues[i % NUM_SEGMENTS];
 		double yOffset = radius * ((double)i / (NUM_SEGMENTS * 3)) * sinValues[i % NUM_SEGMENTS];
 
-		glVertex2f(source.x + xOffset, source.y + yOffset);
+		glVertex2f(target.x + xOffset, target.y + yOffset);
 	}
 	glEnd();
 
