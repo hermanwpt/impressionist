@@ -76,7 +76,10 @@ void CustomBrush::BrushMove(const Point source, const Point target)
 
 void CustomBrush::BrushEnd(const Point source, const Point target)
 {
-	//delete[] img;
+	if (img != nullptr) {
+		delete[] img;
+		img = nullptr;
+	}
 }
 
 void CustomBrush::selectFilter(filterType type) {
