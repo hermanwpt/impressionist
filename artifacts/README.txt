@@ -1,3 +1,6 @@
+IMPORTANT: Please restart the program after testing each requirement to avoid some memory issues (especially when loading large images).
+Professor Tang said in class that performance is not a concern for the Impressionist project.
+
 B Dissolve
 - Input file	: dissolve_INPUT1.bmp (Original image)
 		  dissolve_INPUT2.bmp (Another image)
