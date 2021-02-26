@@ -32,7 +32,7 @@ void WarpBrush::BrushBegin(const Point source, const Point target) {
 
 	glPointSize((float)size);
 
-	src = Point{ source.x, source.y };
+	src = Point{ target.x, target.y };
 
 	BrushMove(source, target);
 }
@@ -46,8 +46,8 @@ void WarpBrush::BrushMove(const Point source, const Point target) {
 		return;
 	}
 
-	int width = pDoc->m_nPaintWidth;
-	int height = pDoc->m_nPaintHeight;
+	int width = pDoc->m_nWidth;
+	int height = pDoc->m_nHeight;
 
 	int x = source.x;
 	int y = source.y;
@@ -72,7 +72,7 @@ void WarpBrush::BrushMove(const Point source, const Point target) {
 
 	vector<vector<double>> filter = getGaussianFilter(size);
 
-	Point des{ source.x, source.y };
+	Point des{ target.x, target.y };
 
 	double displacementX = static_cast<double>(des.x) - src.x;
 	double displacementY = static_cast<double>(des.y) - src.y;
