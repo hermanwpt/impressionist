@@ -475,14 +475,14 @@ int ImpressionistDoc::clearCanvas()
 // save the painting to m_ucLastPaint after every brush
 //------------------------------------------------------------------
 void ImpressionistDoc::saveLastPaint() {
-	memcpy(m_ucLastPaint, m_ucPainting, m_nWidth * m_nHeight * 3 * sizeof(unsigned char));
+	memcpy(m_ucLastPaint, m_ucPainting, m_nWidth * m_nHeight * 3);
 }
 
 //------------------------------------------------------------------
 // undo the last brush
 //------------------------------------------------------------------
 void ImpressionistDoc::undo() {
-	memcpy(m_ucPainting, m_ucLastPaint, m_nWidth * m_nHeight * 3 * sizeof(unsigned char));
+	memcpy(m_ucPainting, m_ucLastPaint, m_nWidth * m_nHeight * 3);
 	m_pUI->m_paintView->refresh();
 }
 
@@ -497,6 +497,57 @@ void ImpressionistDoc::swap() {
 	m_pUI->m_origView->refresh();
 	m_pUI->m_paintView->refresh();
 }
+
+//------------------------------------------------------------------
+// Customised Image Convolution (customized filter kernel bonus)
+//------------------------------------------------------------------
+void ImpressionistDoc::customizedImageConvolution(std::vector<std::vector<double>> fk, bool normalized) {
+	int sum = 0;
+	for (int i = 0; i < fk.size(); i++)
+		for (int j = 0; j < fk.size(); j++)
+			sum += fk[i][j];
+
+	int height = m_nHeight;
+	int width = m_nWidth;
+	int filterSize = fk.size();
+	unsigned char* oldImage = new unsigned char[height * width * 3];
+	unsigned char* newImage = new unsigned char[height * width * 3];
+	memcpy(oldImage, m_ucPainting, height * width * 3);
+	memset(newImage, 0, height * width * 3);
+
+	for (int rgb = 0; rgb < 3; rgb++) {
+		for (int i = 0; i < width; i++) {
+			for (int j = 0; j < height; j++) {
+				int newImgPx = 0;
+				bool isBorder = false;
+				for (int x = 0; x < filterSize; x++) {
+					for (int y = 0; y < filterSize; y++) {
+						int pixelX = i - (filterSize) / 2 + x;
+						int pixelY = j - (filterSize) / 2 + y;
+						if (pixelX < 0 || pixelX > width - 1 || pixelY < 0 || pixelY > height - 1) {
+							isBorder = true;
+							continue;
+						}
+						newImgPx += fk[x][y] * oldImage[(pixelY * width + pixelX) * 3 + rgb];
+					}
+				}
+				if (isBorder) {
+					newImage[(width * j + i) * 3 + rgb] = 0;
+					continue;
+				}
+				if (normalized) {
+					newImgPx = newImgPx / sum;
+				}
+				newImage[(width * j + i) * 3 + rgb] = newImgPx;
+			}
+		}
+	}
+	memcpy(m_ucPainting, newImage, height * width * 3);
+	delete[] oldImage;
+	delete[] newImage;
+	m_pUI->m_paintView->refresh();
+}
+
 
 //------------------------------------------------------------------
 // Get the color of the pixel in the original image at coord x and y
